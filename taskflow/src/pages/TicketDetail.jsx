@@ -39,6 +39,7 @@ import {
 } from '@/hooks/useTickets'
 import { useAddComment } from '@/hooks/useComments'
 import { useAuth } from '@/context/AuthContext'
+import { useTranslation } from '@/context/LanguageContext'
 import { toast } from '@/components/ui/sonner'
 import { formatDate, getInitials, timeAgo, friendlyError } from '@/lib/utils'
 
@@ -55,6 +56,7 @@ export default function TicketDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { user } = useAuth()
+  const { t } = useTranslation()
   const { data: ticket, isLoading, isError } = useTicket(id)
 
   const updateStatus = useUpdateTicketStatus()
@@ -72,12 +74,12 @@ export default function TicketDetail() {
     return (
       <Card>
         <CardContent className="flex flex-col items-center gap-4 p-12 text-center">
-          <p className="font-medium">Ticket not found</p>
+          <p className="font-medium">{t('ticketDetail.notFoundTitle')}</p>
           <p className="text-sm text-muted-foreground">
-            It may have been removed, or you don't have access to it.
+            {t('ticketDetail.notFoundSubtitle')}
           </p>
           <Button variant="outline" onClick={() => navigate('/dashboard')}>
-            Back to Dashboard
+            {t('ticketDetail.backToDashboard')}
           </Button>
         </CardContent>
       </Card>
@@ -99,9 +101,9 @@ export default function TicketDetail() {
   async function handleStatusChange(status) {
     try {
       await updateStatus.mutateAsync({ ticketId: ticket.id, status })
-      toast.success(`Status updated to ${status}`)
+      toast.success(t('ticketDetail.statusUpdated', { status: t(`status.${status}`) }))
     } catch (error) {
-      toast.error(friendlyError(error, 'Failed to update status.'))
+      toast.error(friendlyError(error, t('ticketDetail.statusFailed')))
     }
   }
 
@@ -111,9 +113,9 @@ export default function TicketDetail() {
     if (!file) return
     try {
       await uploadAttachment.mutateAsync({ ticketId: ticket.id, file })
-      toast.success('File uploaded')
+      toast.success(t('ticketDetail.fileUploaded'))
     } catch (error) {
-      toast.error(friendlyError(error, 'Failed to upload file.'))
+      toast.error(friendlyError(error, t('ticketDetail.uploadFailed')))
     }
   }
 
@@ -125,7 +127,7 @@ export default function TicketDetail() {
       await addComment.mutateAsync({ ticketId: ticket.id, message })
       setComment('')
     } catch (error) {
-      toast.error(friendlyError(error, 'Failed to add comment.'))
+      toast.error(friendlyError(error, t('ticketDetail.commentFailed')))
     }
   }
 
@@ -135,11 +137,11 @@ export default function TicketDetail() {
     switch (ticket.status) {
       case 'Open':
       case 'Reopened':
-        return { label: 'Start Working', next: 'In Progress', icon: Play }
+        return { labelKey: 'ticketDetail.startWorking', next: 'In Progress', icon: Play }
       case 'In Progress':
-        return { label: 'Mark as Done', next: 'Done', icon: CheckCircle2 }
+        return { labelKey: 'ticketDetail.markAsDone', next: 'Done', icon: CheckCircle2 }
       case 'Done':
-        return { label: 'Reopen', next: 'Reopened', icon: RotateCcw }
+        return { labelKey: 'ticketDetail.reopen', next: 'Reopened', icon: RotateCcw }
       default:
         return null
     }
@@ -150,9 +152,14 @@ export default function TicketDetail() {
 
   return (
     <div className="space-y-6">
-      <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="-ml-2">
-        <ArrowLeft className="h-4 w-4" />
-        Back
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => navigate(-1)}
+        className="ltr:-ml-2 rtl:-mr-2"
+      >
+        <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
+        {t('ticketDetail.back')}
       </Button>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -173,17 +180,17 @@ export default function TicketDetail() {
           <Card>
             <CardContent className="p-5">
               <dl className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-                <MetaItem label="Created by" value={ticket.creator?.name || '—'} />
-                <MetaItem label="Assigned to" value={ticket.assignee?.name || '—'} />
-                <MetaItem label="Created" value={formatDate(ticket.created_at)} />
-                <MetaItem label="Updated" value={formatDate(ticket.updated_at)} />
+                <MetaItem label={t('ticketDetail.createdBy')} value={ticket.creator?.name || '—'} />
+                <MetaItem label={t('ticketDetail.assignedTo')} value={ticket.assignee?.name || '—'} />
+                <MetaItem label={t('ticketDetail.created')} value={formatDate(ticket.created_at)} />
+                <MetaItem label={t('ticketDetail.updated')} value={formatDate(ticket.updated_at)} />
               </dl>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Description</CardTitle>
+              <CardTitle className="text-base">{t('ticketDetail.description')}</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
@@ -198,7 +205,7 @@ export default function TicketDetail() {
               <CardTitle className="text-base">
                 <span className="flex items-center gap-2">
                   <Paperclip className="h-4 w-4" />
-                  Attachments
+                  {t('ticketDetail.attachments')}
                 </span>
               </CardTitle>
               {canUpload && (
@@ -220,7 +227,7 @@ export default function TicketDetail() {
                     ) : (
                       <Upload className="h-4 w-4" />
                     )}
-                    Upload
+                    {t('ticketDetail.upload')}
                   </Button>
                 </>
               )}
@@ -242,13 +249,13 @@ export default function TicketDetail() {
                         className="flex items-center gap-1 text-sm text-primary hover:underline"
                       >
                         <Download className="h-4 w-4" />
-                        Download
+                        {t('ticketDetail.download')}
                       </a>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-muted-foreground">No attachments yet.</p>
+                <p className="text-sm text-muted-foreground">{t('ticketDetail.noAttachments')}</p>
               )}
             </CardContent>
           </Card>
@@ -256,7 +263,7 @@ export default function TicketDetail() {
           {/* Comments */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Comments</CardTitle>
+              <CardTitle className="text-base">{t('ticketDetail.comments')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {comments.length ? (
@@ -271,7 +278,7 @@ export default function TicketDetail() {
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-medium">
-                            {c.commenter?.name || 'Unknown'}
+                            {c.commenter?.name || t('common.unknown')}
                           </span>
                           <span className="text-xs text-muted-foreground">
                             {timeAgo(c.created_at)}
@@ -285,14 +292,14 @@ export default function TicketDetail() {
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-muted-foreground">No comments yet.</p>
+                <p className="text-sm text-muted-foreground">{t('ticketDetail.noComments')}</p>
               )}
 
               <Separator />
 
               <form onSubmit={handleAddComment} className="space-y-2">
                 <Textarea
-                  placeholder="Write a comment…"
+                  placeholder={t('ticketDetail.commentPlaceholder')}
                   rows={3}
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
@@ -302,9 +309,9 @@ export default function TicketDetail() {
                     {addComment.isPending ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
-                      <Send className="h-4 w-4" />
+                      <Send className="h-4 w-4 rtl:rotate-180" />
                     )}
-                    Add Comment
+                    {t('ticketDetail.addComment')}
                   </Button>
                 </div>
               </form>
@@ -316,7 +323,7 @@ export default function TicketDetail() {
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Status</CardTitle>
+              <CardTitle className="text-base">{t('ticketDetail.status')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <StatusBadge status={ticket.status} className="text-sm" />
@@ -332,7 +339,7 @@ export default function TicketDetail() {
                   ) : (
                     <devAction.icon className="h-4 w-4" />
                   )}
-                  {devAction.label}
+                  {t(devAction.labelKey)}
                 </Button>
               )}
 
@@ -341,23 +348,23 @@ export default function TicketDetail() {
                   <AlertDialogTrigger asChild>
                     <Button variant="outline" className="w-full text-destructive">
                       <XCircle className="h-4 w-4" />
-                      Cancel Ticket
+                      {t('ticketDetail.cancelTicket')}
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Cancel this ticket?</AlertDialogTitle>
+                      <AlertDialogTitle>{t('ticketDetail.cancelTitle')}</AlertDialogTitle>
                       <AlertDialogDescription>
-                        This will set the ticket to Cancelled. This action cannot be undone.
+                        {t('ticketDetail.cancelDescription')}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Keep Ticket</AlertDialogCancel>
+                      <AlertDialogCancel>{t('ticketDetail.keepTicket')}</AlertDialogCancel>
                       <AlertDialogAction
                         className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                         onClick={() => handleStatusChange('Cancelled')}
                       >
-                        Cancel Ticket
+                        {t('ticketDetail.cancelTicket')}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -366,7 +373,7 @@ export default function TicketDetail() {
 
               {!devAction && !canCancel && (
                 <p className="text-sm text-muted-foreground">
-                  No actions available for this ticket.
+                  {t('ticketDetail.noActions')}
                 </p>
               )}
             </CardContent>
@@ -374,15 +381,18 @@ export default function TicketDetail() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Ticket Info</CardTitle>
+              <CardTitle className="text-base">{t('ticketDetail.ticketInfo')}</CardTitle>
             </CardHeader>
             <CardContent>
               <dl className="space-y-3">
-                <MetaItem label="Type" value={<TypeBadge type={ticket.type} />} />
-                <MetaItem label="Priority" value={<PriorityBadge priority={ticket.priority} />} />
-                <MetaItem label="Created" value={formatDate(ticket.created_at)} />
+                <MetaItem label={t('ticketDetail.type')} value={<TypeBadge type={ticket.type} />} />
+                <MetaItem
+                  label={t('ticketDetail.priority')}
+                  value={<PriorityBadge priority={ticket.priority} />}
+                />
+                <MetaItem label={t('ticketDetail.created')} value={formatDate(ticket.created_at)} />
                 {ticket.closed_at && (
-                  <MetaItem label="Closed" value={formatDate(ticket.closed_at)} />
+                  <MetaItem label={t('ticketDetail.closed')} value={formatDate(ticket.closed_at)} />
                 )}
               </dl>
             </CardContent>

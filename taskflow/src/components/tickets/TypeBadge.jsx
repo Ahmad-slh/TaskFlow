@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/context/LanguageContext'
 
 const TYPE_STYLES = {
   Bug: 'bg-red-50 text-red-500',
@@ -7,6 +8,7 @@ const TYPE_STYLES = {
 }
 
 export function TypeBadge({ type, className }) {
+  const { t } = useTranslation()
   return (
     <span
       className={cn(
@@ -15,7 +17,7 @@ export function TypeBadge({ type, className }) {
         className
       )}
     >
-      {type}
+      {t(`type.${type}`)}
     </span>
   )
 }

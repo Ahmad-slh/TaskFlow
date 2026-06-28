@@ -7,21 +7,23 @@ import {
   X,
 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
+import { useTranslation } from '@/context/LanguageContext'
 import { cn } from '@/lib/utils'
 
 const EMPLOYEE_NAV = [
-  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/create-ticket', label: 'Create Ticket', icon: PlusCircle },
-  { to: '/my-tickets', label: 'My Tickets', icon: Ticket },
+  { to: '/dashboard', labelKey: 'nav.dashboard', icon: LayoutDashboard },
+  { to: '/create-ticket', labelKey: 'nav.createTicket', icon: PlusCircle },
+  { to: '/my-tickets', labelKey: 'nav.myTickets', icon: Ticket },
 ]
 
 const DEVELOPER_NAV = [
-  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/assigned', label: 'Assigned to Me', icon: Inbox },
+  { to: '/dashboard', labelKey: 'nav.dashboard', icon: LayoutDashboard },
+  { to: '/assigned', labelKey: 'nav.assigned', icon: Inbox },
 ]
 
 export function Sidebar({ open, onClose }) {
   const { role } = useAuth()
+  const { t } = useTranslation()
   const nav = role === 'developer' ? DEVELOPER_NAV : EMPLOYEE_NAV
 
   return (
@@ -37,8 +39,8 @@ export function Sidebar({ open, onClose }) {
 
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-sidebar text-sidebar-foreground transition-transform duration-200 lg:static lg:translate-x-0',
-          open ? 'translate-x-0' : '-translate-x-full'
+          'fixed inset-y-0 start-0 z-40 flex w-64 flex-col bg-sidebar text-sidebar-foreground transition-transform duration-200 lg:static lg:!translate-x-0',
+          open ? 'translate-x-0' : '-translate-x-full rtl:translate-x-full'
         )}
       >
         <div className="flex h-16 items-center justify-between px-6">
@@ -46,19 +48,21 @@ export function Sidebar({ open, onClose }) {
             <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
               <Ticket className="h-5 w-5" />
             </div>
-            <span className="text-lg font-semibold text-sidebar-active">TaskFlow</span>
+            <span className="text-lg font-semibold text-sidebar-active">
+              {t('sidebar.appName')}
+            </span>
           </div>
           <button
             className="text-sidebar-foreground lg:hidden"
             onClick={onClose}
-            aria-label="Close sidebar"
+            aria-label={t('sidebar.closeSidebar')}
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         <nav className="flex-1 space-y-1 px-3 py-4">
-          {nav.map(({ to, label, icon: Icon }) => (
+          {nav.map(({ to, labelKey, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}
@@ -73,13 +77,13 @@ export function Sidebar({ open, onClose }) {
               }
             >
               <Icon className="h-4 w-4" />
-              {label}
+              {t(labelKey)}
             </NavLink>
           ))}
         </nav>
 
         <div className="px-6 py-4 text-xs text-sidebar-foreground/60">
-          TaskFlow · Internal Tickets
+          {t('sidebar.tagline')}
         </div>
       </aside>
     </>

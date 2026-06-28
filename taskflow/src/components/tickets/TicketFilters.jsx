@@ -8,12 +8,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useTranslation } from '@/context/LanguageContext'
 
 const STATUS_OPTIONS = ['All', 'Open', 'In Progress', 'Done', 'Cancelled', 'Reopened']
 const PRIORITY_OPTIONS = ['All', 'Low', 'Medium', 'High']
 const TYPE_OPTIONS = ['All', 'Bug', 'Task', 'Request']
 
 export function TicketFilters({ filters, onChange }) {
+  const { t } = useTranslation()
   // Local search value for debouncing.
   const [searchInput, setSearchInput] = useState(filters.search)
 
@@ -32,10 +34,10 @@ export function TicketFilters({ filters, onChange }) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
       <div className="relative flex-1 sm:min-w-[200px]">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
-          placeholder="Search by title…"
-          className="pl-9"
+          placeholder={t('filters.searchPlaceholder')}
+          className="ps-9"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
         />
@@ -43,12 +45,12 @@ export function TicketFilters({ filters, onChange }) {
 
       <Select value={filters.status} onValueChange={(v) => setField('status', v)}>
         <SelectTrigger className="w-full sm:w-[160px]">
-          <SelectValue placeholder="Status" />
+          <SelectValue placeholder={t('filters.status')} />
         </SelectTrigger>
         <SelectContent>
           {STATUS_OPTIONS.map((s) => (
             <SelectItem key={s} value={s}>
-              {s === 'All' ? 'All Statuses' : s}
+              {s === 'All' ? t('filters.allStatuses') : t(`status.${s}`)}
             </SelectItem>
           ))}
         </SelectContent>
@@ -56,12 +58,12 @@ export function TicketFilters({ filters, onChange }) {
 
       <Select value={filters.priority} onValueChange={(v) => setField('priority', v)}>
         <SelectTrigger className="w-full sm:w-[150px]">
-          <SelectValue placeholder="Priority" />
+          <SelectValue placeholder={t('filters.priority')} />
         </SelectTrigger>
         <SelectContent>
           {PRIORITY_OPTIONS.map((p) => (
             <SelectItem key={p} value={p}>
-              {p === 'All' ? 'All Priorities' : p}
+              {p === 'All' ? t('filters.allPriorities') : t(`priority.${p}`)}
             </SelectItem>
           ))}
         </SelectContent>
@@ -69,12 +71,12 @@ export function TicketFilters({ filters, onChange }) {
 
       <Select value={filters.type} onValueChange={(v) => setField('type', v)}>
         <SelectTrigger className="w-full sm:w-[150px]">
-          <SelectValue placeholder="Type" />
+          <SelectValue placeholder={t('filters.type')} />
         </SelectTrigger>
         <SelectContent>
-          {TYPE_OPTIONS.map((t) => (
-            <SelectItem key={t} value={t}>
-              {t === 'All' ? 'All Types' : t}
+          {TYPE_OPTIONS.map((opt) => (
+            <SelectItem key={opt} value={opt}>
+              {opt === 'All' ? t('filters.allTypes') : t(`type.${opt}`)}
             </SelectItem>
           ))}
         </SelectContent>

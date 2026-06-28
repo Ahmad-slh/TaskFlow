@@ -8,6 +8,7 @@ import {
   applyTicketFilters,
 } from '@/components/tickets/TicketFilters'
 import { useAssignedTickets } from '@/hooks/useTickets'
+import { useTranslation } from '@/context/LanguageContext'
 
 function StatPill({ label, count, className }) {
   return (
@@ -21,6 +22,7 @@ function StatPill({ label, count, className }) {
 
 export default function AssignedTickets() {
   const { data: tickets = [], isLoading } = useAssignedTickets()
+  const { t } = useTranslation()
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
 
   const filtered = useMemo(() => applyTicketFilters(tickets, filters), [tickets, filters])
@@ -36,21 +38,25 @@ export default function AssignedTickets() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">Assigned to Me</h1>
-        <p className="text-sm text-muted-foreground">Tickets assigned to you to work on.</p>
+        <h1 className="text-2xl font-semibold">{t('assigned.title')}</h1>
+        <p className="text-sm text-muted-foreground">{t('assigned.subtitle')}</p>
       </div>
 
       <div className="flex flex-wrap gap-3">
-        <StatPill label="Open" count={counts.open} className="bg-blue-500" />
-        <StatPill label="In Progress" count={counts.inProgress} className="bg-yellow-500" />
-        <StatPill label="Done" count={counts.done} className="bg-green-500" />
+        <StatPill label={t('assigned.open')} count={counts.open} className="bg-blue-500" />
+        <StatPill
+          label={t('assigned.inProgress')}
+          count={counts.inProgress}
+          className="bg-yellow-500"
+        />
+        <StatPill label={t('assigned.done')} count={counts.done} className="bg-green-500" />
       </div>
 
       {hasNoTickets ? (
         <Card>
           <CardContent className="flex flex-col items-center gap-3 p-12 text-center">
             <Inbox className="h-10 w-10 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">No tickets assigned to you yet</p>
+            <p className="text-sm text-muted-foreground">{t('assigned.empty')}</p>
           </CardContent>
         </Card>
       ) : (
@@ -59,11 +65,14 @@ export default function AssignedTickets() {
           <TicketTable
             tickets={filtered}
             loading={isLoading}
-            personColumn={{ header: 'Created By', getName: (t) => t.creator_profile?.name }}
+            personColumn={{
+              header: t('assigned.createdBy'),
+              getName: (row) => row.creator_profile?.name,
+            }}
             emptyState={
               <Card>
                 <CardContent className="p-10 text-center text-sm text-muted-foreground">
-                  No tickets match your filters.
+                  {t('assigned.noMatches')}
                 </CardContent>
               </Card>
             }

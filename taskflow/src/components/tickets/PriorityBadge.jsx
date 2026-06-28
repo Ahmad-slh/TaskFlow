@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/context/LanguageContext'
 
 const PRIORITY_STYLES = {
   Low: 'bg-gray-100 text-gray-600',
@@ -7,6 +8,7 @@ const PRIORITY_STYLES = {
 }
 
 export function PriorityBadge({ priority, className }) {
+  const { t } = useTranslation()
   return (
     <span
       className={cn(
@@ -15,7 +17,7 @@ export function PriorityBadge({ priority, className }) {
         className
       )}
     >
-      {priority}
+      {t(`priority.${priority}`)}
     </span>
   )
 }

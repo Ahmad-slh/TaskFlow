@@ -17,21 +17,23 @@ import {
 } from '@/components/ui/select'
 import { useCreateTicket } from '@/hooks/useTickets'
 import { useDevelopers } from '@/hooks/useProfiles'
+import { useTranslation } from '@/context/LanguageContext'
 import { toast } from '@/components/ui/sonner'
 import { friendlyError } from '@/lib/utils'
 
 const schema = z.object({
-  title: z.string().min(5, 'Title must be at least 5 characters'),
-  description: z.string().min(10, 'Description must be at least 10 characters'),
-  type: z.enum(['Bug', 'Task', 'Request'], { required_error: 'Select a type' }),
-  priority: z.enum(['Low', 'Medium', 'High'], { required_error: 'Select a priority' }),
-  assigned_to: z.string().min(1, 'Select a developer'),
+  title: z.string().min(5, 'createTicket.titleMin'),
+  description: z.string().min(10, 'createTicket.descriptionMin'),
+  type: z.enum(['Bug', 'Task', 'Request'], { required_error: 'createTicket.typeRequired' }),
+  priority: z.enum(['Low', 'Medium', 'High'], { required_error: 'createTicket.priorityRequired' }),
+  assigned_to: z.string().min(1, 'createTicket.assigneeRequired'),
 })
 
 export default function CreateTicket() {
   const navigate = useNavigate()
   const createTicket = useCreateTicket()
   const { data: developers = [], isLoading: loadingDevs } = useDevelopers()
+  const { t } = useTranslation()
 
   const {
     register,
@@ -52,104 +54,108 @@ export default function CreateTicket() {
   async function onSubmit(values) {
     try {
       const ticket = await createTicket.mutateAsync(values)
-      toast.success(`Ticket #${ticket.ticket_number} created successfully`)
+      toast.success(t('createTicket.success', { number: ticket.ticket_number }))
       navigate('/my-tickets')
     } catch (error) {
       console.error('Create ticket failed:', error)
-      toast.error(friendlyError(error, 'Failed to create ticket.'))
+      toast.error(friendlyError(error, t('createTicket.failed')))
     }
   }
 
   function onInvalid() {
-    toast.error('Please complete the highlighted fields')
+    toast.error(t('createTicket.invalid'))
   }
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">Create Ticket</h1>
+        <h1 className="text-2xl font-semibold">{t('createTicket.title')}</h1>
         <p className="text-sm text-muted-foreground">
-          Describe the issue or request and assign it to a developer.
+          {t('createTicket.subtitle')}
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Ticket Details</CardTitle>
+          <CardTitle>{t('createTicket.detailsTitle')}</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
-              <Input id="title" placeholder="Short summary" {...register('title')} />
+              <Label htmlFor="title">{t('createTicket.ticketTitle')}</Label>
+              <Input
+                id="title"
+                placeholder={t('createTicket.titlePlaceholder')}
+                {...register('title')}
+              />
               {errors.title && (
-                <p className="text-sm text-destructive">{errors.title.message}</p>
+                <p className="text-sm text-destructive">{t(errors.title.message)}</p>
               )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">{t('createTicket.description')}</Label>
               <Textarea
                 id="description"
                 rows={5}
-                placeholder="Provide as much detail as possible…"
+                placeholder={t('createTicket.descriptionPlaceholder')}
                 {...register('description')}
               />
               {errors.description && (
-                <p className="text-sm text-destructive">{errors.description.message}</p>
+                <p className="text-sm text-destructive">{t(errors.description.message)}</p>
               )}
             </div>
 
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label>Type</Label>
+                <Label>{t('createTicket.type')}</Label>
                 <Controller
                   control={control}
                   name="type"
                   render={({ field }) => (
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select type" />
+                        <SelectValue placeholder={t('createTicket.selectType')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Bug">Bug</SelectItem>
-                        <SelectItem value="Task">Task</SelectItem>
-                        <SelectItem value="Request">Request</SelectItem>
+                        <SelectItem value="Bug">{t('type.Bug')}</SelectItem>
+                        <SelectItem value="Task">{t('type.Task')}</SelectItem>
+                        <SelectItem value="Request">{t('type.Request')}</SelectItem>
                       </SelectContent>
                     </Select>
                   )}
                 />
                 {errors.type && (
-                  <p className="text-sm text-destructive">{errors.type.message}</p>
+                  <p className="text-sm text-destructive">{t(errors.type.message)}</p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label>Priority</Label>
+                <Label>{t('createTicket.priority')}</Label>
                 <Controller
                   control={control}
                   name="priority"
                   render={({ field }) => (
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select priority" />
+                        <SelectValue placeholder={t('createTicket.selectPriority')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Low">Low</SelectItem>
-                        <SelectItem value="Medium">Medium</SelectItem>
-                        <SelectItem value="High">High</SelectItem>
+                        <SelectItem value="Low">{t('priority.Low')}</SelectItem>
+                        <SelectItem value="Medium">{t('priority.Medium')}</SelectItem>
+                        <SelectItem value="High">{t('priority.High')}</SelectItem>
                       </SelectContent>
                     </Select>
                   )}
                 />
                 {errors.priority && (
-                  <p className="text-sm text-destructive">{errors.priority.message}</p>
+                  <p className="text-sm text-destructive">{t(errors.priority.message)}</p>
                 )}
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label>Assign To</Label>
+              <Label>{t('createTicket.assignTo')}</Label>
               <Controller
                 control={control}
                 name="assigned_to"
@@ -157,7 +163,11 @@ export default function CreateTicket() {
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger>
                       <SelectValue
-                        placeholder={loadingDevs ? 'Loading developers…' : 'Select a developer'}
+                        placeholder={
+                          loadingDevs
+                            ? t('createTicket.loadingDevelopers')
+                            : t('createTicket.selectDeveloper')
+                        }
                       />
                     </SelectTrigger>
                     <SelectContent>
@@ -171,7 +181,7 @@ export default function CreateTicket() {
                 )}
               />
               {errors.assigned_to && (
-                <p className="text-sm text-destructive">{errors.assigned_to.message}</p>
+                <p className="text-sm text-destructive">{t(errors.assigned_to.message)}</p>
               )}
             </div>
 
@@ -182,11 +192,11 @@ export default function CreateTicket() {
                 onClick={() => navigate(-1)}
                 disabled={createTicket.isPending}
               >
-                Cancel
+                {t('createTicket.cancel')}
               </Button>
               <Button type="submit" disabled={createTicket.isPending}>
                 {createTicket.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-                Create Ticket
+                {t('createTicket.submit')}
               </Button>
             </div>
           </form>

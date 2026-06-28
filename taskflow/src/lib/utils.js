@@ -1,29 +1,43 @@
 import { clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { format, formatDistanceToNow } from 'date-fns'
+import { ar } from 'date-fns/locale'
+import en from '@/i18n/en'
+import arDict from '@/i18n/ar'
 
 export function cn(...inputs) {
   return twMerge(clsx(inputs))
 }
 
+/** Current language as stored by LanguageContext (defaults to English). */
+function currentLang() {
+  if (typeof window === 'undefined') return 'en'
+  return window.localStorage.getItem('lang') === 'ar' ? 'ar' : 'en'
+}
+
+/** date-fns locale for the active language (English is the library default). */
+function dateLocale() {
+  return currentLang() === 'ar' ? { locale: ar } : undefined
+}
+
 /**
- * Format a date as: "Jun 25, 2026 · 3:42 PM"
+ * Format a date as: "Jun 25, 2026 · 3:42 PM" (localized).
  */
 export function formatDate(value) {
   if (!value) return '—'
   const date = typeof value === 'string' ? new Date(value) : value
   if (Number.isNaN(date.getTime())) return '—'
-  return format(date, "MMM d, yyyy '·' h:mm a")
+  return format(date, "MMM d, yyyy '·' h:mm a", dateLocale())
 }
 
 /**
- * Relative time, e.g. "3 hours ago"
+ * Relative time, e.g. "3 hours ago" (localized).
  */
 export function timeAgo(value) {
   if (!value) return ''
   const date = typeof value === 'string' ? new Date(value) : value
   if (Number.isNaN(date.getTime())) return ''
-  return formatDistanceToNow(date, { addSuffix: true })
+  return formatDistanceToNow(date, { addSuffix: true, ...dateLocale() })
 }
 
 /**
@@ -40,17 +54,16 @@ export function getInitials(name) {
 }
 
 /**
- * Turn a raw Supabase/network error into a friendly message.
+ * Turn a raw Supabase/network error into a friendly, localized message.
+ * Known Supabase messages are translated via the active dictionary; the
+ * caller-supplied `fallback` should already be translated.
  */
-export function friendlyError(error, fallback = 'Something went wrong. Please try again.') {
-  if (!error) return fallback
+export function friendlyError(error, fallback) {
+  const dict = currentLang() === 'ar' ? arDict : en
+  const resolvedFallback = fallback ?? dict.errors.fallback
+  if (!error) return resolvedFallback
   const message = typeof error === 'string' ? error : error.message
-  if (!message) return fallback
+  if (!message) return resolvedFallback
 
-  const map = {
-    'Invalid login credentials': 'Incorrect email or password.',
-    'Email not confirmed': 'Please confirm your email before signing in.',
-    'Failed to fetch': 'Network error. Check your connection and try again.',
-  }
-  return map[message] || message
+  return dict.errors[message] || message
 }

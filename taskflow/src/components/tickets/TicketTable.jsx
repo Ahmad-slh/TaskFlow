@@ -14,6 +14,7 @@ import { StatusBadge } from '@/components/tickets/StatusBadge'
 import { PriorityBadge } from '@/components/tickets/PriorityBadge'
 import { TypeBadge } from '@/components/tickets/TypeBadge'
 import { formatDate } from '@/lib/utils'
+import { useTranslation } from '@/context/LanguageContext'
 
 /**
  * Reusable tickets table.
@@ -33,20 +34,21 @@ export function TicketTable({
   cancellingId,
   emptyState,
 }) {
+  const { t } = useTranslation()
   if (loading) {
     return (
       <div className="rounded-lg border bg-card">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>#</TableHead>
-              <TableHead>Title</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Priority</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>{t('table.number')}</TableHead>
+              <TableHead>{t('table.title')}</TableHead>
+              <TableHead>{t('table.type')}</TableHead>
+              <TableHead>{t('table.priority')}</TableHead>
+              <TableHead>{t('table.status')}</TableHead>
               {personColumn && <TableHead>{personColumn.header}</TableHead>}
-              <TableHead>Created At</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t('table.createdAt')}</TableHead>
+              <TableHead className="text-end">{t('table.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -74,14 +76,14 @@ export function TicketTable({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>#</TableHead>
-            <TableHead>Title</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Priority</TableHead>
-            <TableHead>Status</TableHead>
+            <TableHead>{t('table.number')}</TableHead>
+            <TableHead>{t('table.title')}</TableHead>
+            <TableHead>{t('table.type')}</TableHead>
+            <TableHead>{t('table.priority')}</TableHead>
+            <TableHead>{t('table.status')}</TableHead>
             {personColumn && <TableHead>{personColumn.header}</TableHead>}
-            <TableHead>Created At</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead>{t('table.createdAt')}</TableHead>
+            <TableHead className="text-end">{t('table.actions')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -110,12 +112,12 @@ export function TicketTable({
               <TableCell className="whitespace-nowrap text-muted-foreground">
                 {formatDate(ticket.created_at)}
               </TableCell>
-              <TableCell className="text-right">
+              <TableCell className="text-end">
                 <div className="flex items-center justify-end gap-2">
                   <Button asChild variant="outline" size="sm">
                     <Link to={`/tickets/${ticket.id}`}>
-                      <Eye className="mr-1 h-4 w-4" />
-                      View
+                      <Eye className="h-4 w-4 ltr:mr-1 rtl:ml-1" />
+                      {t('table.view')}
                     </Link>
                   </Button>
                   {onCancel && ticket.status === 'Open' && (
@@ -126,8 +128,8 @@ export function TicketTable({
                       disabled={cancellingId === ticket.id}
                       onClick={() => onCancel(ticket)}
                     >
-                      <XCircle className="mr-1 h-4 w-4" />
-                      Cancel
+                      <XCircle className="h-4 w-4 ltr:mr-1 rtl:ml-1" />
+                      {t('table.cancel')}
                     </Button>
                   )}
                 </div>

@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/context/LanguageContext'
 
 const STATUS_STYLES = {
   Open: 'bg-blue-100 text-blue-700',
@@ -9,6 +10,7 @@ const STATUS_STYLES = {
 }
 
 export function StatusBadge({ status, className }) {
+  const { t } = useTranslation()
   return (
     <span
       className={cn(
@@ -17,7 +19,7 @@ export function StatusBadge({ status, className }) {
         className
       )}
     >
-      {status}
+      {t(`status.${status}`)}
     </span>
   )
 }

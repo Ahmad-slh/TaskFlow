@@ -41,6 +41,35 @@ export function timeAgo(value) {
 }
 
 /**
+ * Compact elapsed time between two instants, e.g. "2h 15m", "3d 4h", "45m".
+ * Returns "—" when either bound is missing/invalid. Unit labels and digits are
+ * localized to the active language.
+ */
+export function formatDurationShort(start, end) {
+  if (!start || !end) return '—'
+  const ms = new Date(end).getTime() - new Date(start).getTime()
+  if (!Number.isFinite(ms) || ms < 0) return '—'
+
+  const lang = currentLang()
+  const dict = lang === 'ar' ? arDict : en
+  const num = (n) => new Intl.NumberFormat(lang === 'ar' ? 'ar' : 'en').format(n)
+
+  const totalMin = Math.floor(ms / 60000)
+  if (totalMin < 1) return dict.duration.lessThanMinute
+
+  const d = Math.floor(totalMin / 1440)
+  const h = Math.floor((totalMin % 1440) / 60)
+  const m = totalMin % 60
+
+  const parts = []
+  if (d) parts.push(`${num(d)}${dict.duration.d}`)
+  if (h) parts.push(`${num(h)}${dict.duration.h}`)
+  // Show minutes only when under a day, to keep the label to two units.
+  if (m && !d) parts.push(`${num(m)}${dict.duration.m}`)
+  return parts.join(' ') || `${num(0)}${dict.duration.m}`
+}
+
+/**
  * Initials from a name, e.g. "Jane Doe" -> "JD"
  */
 export function getInitials(name) {

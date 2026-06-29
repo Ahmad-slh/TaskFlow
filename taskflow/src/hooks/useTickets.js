@@ -98,10 +98,13 @@ export function useUpdateTicketStatus() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async ({ ticketId, status }) => {
+      const now = new Date().toISOString()
       const payload = {
         status,
-        updated_at: new Date().toISOString(),
-        closed_at: CLOSED_STATUSES.includes(status) ? new Date().toISOString() : null,
+        updated_at: now,
+        closed_at: CLOSED_STATUSES.includes(status) ? now : null,
+        // Stamp the start of work each time the ticket (re)enters "In Progress".
+        ...(status === 'In Progress' ? { started_at: now } : {}),
       }
       const { data, error } = await supabase
         .from('tickets')

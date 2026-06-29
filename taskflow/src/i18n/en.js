@@ -174,9 +174,17 @@ export default {
     priority: 'Priority',
     status: 'Status',
     createdAt: 'Created At',
+    duration: 'Duration',
     actions: 'Actions',
     view: 'View',
     cancel: 'Cancel',
+  },
+
+  duration: {
+    d: 'd',
+    h: 'h',
+    m: 'm',
+    lessThanMinute: '<1m',
   },
 
   filters: {

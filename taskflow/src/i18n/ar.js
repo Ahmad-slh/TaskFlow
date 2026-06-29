@@ -173,9 +173,17 @@ export default {
     priority: 'الأولوية',
     status: 'الحالة',
     createdAt: 'تاريخ الإنشاء',
+    duration: 'المدة',
     actions: 'الإجراءات',
     view: 'عرض',
     cancel: 'إلغاء',
+  },
+
+  duration: {
+    d: 'ي',
+    h: 'س',
+    m: 'د',
+    lessThanMinute: '< ١ د',
   },
 
   filters: {

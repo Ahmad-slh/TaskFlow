@@ -1,0 +1,11 @@
+{
+  "name": "tikitaty",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix taskflow run dev",
+    "build": "npm --prefix taskflow run build",
+    "lint": "npm --prefix taskflow run lint",
+    "preview": "npm --prefix taskflow run preview",
+    "install:app": "npm --prefix taskflow install"
+  }
+}

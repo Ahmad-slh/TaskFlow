@@ -5,3 +5,8 @@
 
 alter table public.tickets
   add column if not exists started_at timestamptz;
+
+-- Tell PostgREST to refresh its schema cache so the API sees the new column
+-- immediately (otherwise requests fail with "Could not find the 'started_at'
+-- column ... in the schema cache").
+notify pgrst, 'reload schema';

@@ -13,8 +13,9 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { StatusBadge } from '@/components/tickets/StatusBadge'
 import { PriorityBadge } from '@/components/tickets/PriorityBadge'
 import { TypeBadge } from '@/components/tickets/TypeBadge'
-import { formatDate } from '@/lib/utils'
+import { formatDate, formatDurationShort } from '@/lib/utils'
 import { useTranslation } from '@/context/LanguageContext'
+import { useNow } from '@/hooks/useNow'
 
 /**
  * Reusable tickets table.
@@ -35,6 +36,7 @@ export function TicketTable({
   emptyState,
 }) {
   const { t } = useTranslation()
+  const now = useNow()
   if (loading) {
     return (
       <div className="rounded-lg border bg-card">
@@ -48,13 +50,14 @@ export function TicketTable({
               <TableHead>{t('table.status')}</TableHead>
               {personColumn && <TableHead>{personColumn.header}</TableHead>}
               <TableHead>{t('table.createdAt')}</TableHead>
+              <TableHead>{t('table.duration')}</TableHead>
               <TableHead className="text-end">{t('table.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {Array.from({ length: 5 }).map((_, i) => (
               <TableRow key={i}>
-                {Array.from({ length: personColumn ? 8 : 7 }).map((__, j) => (
+                {Array.from({ length: personColumn ? 9 : 8 }).map((__, j) => (
                   <TableCell key={j}>
                     <Skeleton className="h-4 w-full max-w-[120px]" />
                   </TableCell>
@@ -111,6 +114,13 @@ export function TicketTable({
               )}
               <TableCell className="whitespace-nowrap text-muted-foreground">
                 {formatDate(ticket.created_at)}
+              </TableCell>
+              <TableCell className="whitespace-nowrap text-muted-foreground">
+                {ticket.status === 'Done'
+                  ? formatDurationShort(ticket.started_at, ticket.closed_at)
+                  : ticket.status === 'In Progress' && ticket.started_at
+                    ? formatDurationShort(ticket.started_at, now)
+                    : '—'}
               </TableCell>
               <TableCell className="text-end">
                 <div className="flex items-center justify-end gap-2">

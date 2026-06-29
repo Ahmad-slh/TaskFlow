@@ -86,6 +86,7 @@ export function TicketTable({
             <TableHead>{t('table.status')}</TableHead>
             {personColumn && <TableHead>{personColumn.header}</TableHead>}
             <TableHead>{t('table.createdAt')}</TableHead>
+            <TableHead>{t('table.duration')}</TableHead>
             <TableHead className="text-end">{t('table.actions')}</TableHead>
           </TableRow>
         </TableHeader>

@@ -22,6 +22,7 @@ export default {
   },
 
   nav: {
+    customers: 'Customers',
     dashboard: 'Dashboard',
     createTicket: 'Create Ticket',
     myTickets: 'My Tickets',
@@ -57,6 +58,13 @@ export default {
   },
 
   dashboard: {
+    overdue: 'Overdue',
+    criticalOpen: 'Critical Open',
+    avgResolution: 'Avg. Resolution Time',
+    byDeveloper: 'Tickets by Developer',
+    topCustomers: 'Top Customers',
+    ticketsCount: '{count} tickets',
+    noData: 'No data yet.',
     welcome: 'Welcome back',
     welcomeNamed: 'Welcome back, {name}',
     subtitleDeveloper: 'Here are the tickets assigned to you.',
@@ -74,6 +82,14 @@ export default {
   },
 
   createTicket: {
+    customer: 'Customer',
+    selectCustomer: 'Select a customer',
+    loadingCustomers: 'Loading customers…',
+    noCustomer: 'No customer (internal)',
+    addCustomer: 'Add new customer',
+    dueDate: 'Due Date',
+    estimatedHours: 'Estimated Hours',
+    estimatedHoursInvalid: 'Enter a valid number of hours',
     title: 'Create Ticket',
     subtitle: 'Describe the issue or request and assign it to a developer.',
     detailsTitle: 'Ticket Details',
@@ -130,6 +146,20 @@ export default {
   },
 
   ticketDetail: {
+    customer: 'Customer',
+    dueDate: 'Due date',
+    estimatedHours: 'Estimated',
+    actualTime: 'Actual time',
+    hours: '{n}h',
+    overdue: 'Overdue',
+    edit: 'Edit Ticket',
+    editTitle: 'Edit ticket',
+    save: 'Save changes',
+    updatedOk: 'Ticket updated',
+    updateFailed: 'Failed to update ticket.',
+    activity: 'Activity',
+    noActivity: 'No activity yet.',
+    setEstimate: 'Set estimate',
     notFoundTitle: 'Ticket not found',
     notFoundSubtitle: "It may have been removed, or you don't have access to it.",
     backToDashboard: 'Back to Dashboard',
@@ -168,6 +198,10 @@ export default {
   },
 
   table: {
+    customer: 'Customer',
+    dueDate: 'Due Date',
+    overdue: 'Overdue',
+    exportCsv: 'Export CSV',
     number: '#',
     title: 'Title',
     type: 'Type',
@@ -188,6 +222,13 @@ export default {
   },
 
   filters: {
+    customer: 'Customer',
+    allCustomers: 'All Customers',
+    person: 'Person',
+    allPeople: 'Everyone',
+    overdueOnly: 'Overdue only',
+    dueFrom: 'Due from',
+    dueTo: 'Due to',
     searchPlaceholder: 'Search by title…',
     status: 'Status',
     priority: 'Priority',
@@ -214,6 +255,7 @@ export default {
     Reopened: 'Reopened',
   },
   priority: {
+    Critical: 'Critical',
     All: 'All',
     Low: 'Low',
     Medium: 'Medium',
@@ -224,6 +266,55 @@ export default {
     Bug: 'Bug',
     Task: 'Task',
     Request: 'Request',
+  },
+
+  customers: {
+    title: 'Customers',
+    subtitle: 'Manage the companies and clients you open tickets for.',
+    add: 'Add Customer',
+    edit: 'Edit Customer',
+    searchPlaceholder: 'Search customers…',
+    allStatuses: 'All statuses',
+    empty: 'No customers yet. Add your first customer.',
+    noMatches: 'No customers match your search.',
+    name: 'Name',
+    company: 'Company',
+    phone: 'Phone',
+    email: 'Email',
+    address: 'Address',
+    city: 'City',
+    contactPerson: 'Contact Person',
+    notes: 'Notes',
+    status: 'Status',
+    ticketsTitle: 'Tickets',
+    noTickets: 'No tickets for this customer yet.',
+    nameMin: 'Name must be at least 2 characters',
+    emailInvalid: 'Enter a valid email address',
+    save: 'Save',
+    cancel: 'Cancel',
+    created: 'Customer added',
+    updated: 'Customer updated',
+    failed: 'Failed to save customer.',
+    notFound: 'Customer not found',
+    back: 'Back to customers',
+    view: 'View',
+    ticketCount: 'Tickets',
+  },
+
+  customerStatus: {
+    Active: 'Active',
+    Inactive: 'Inactive',
+  },
+
+  activity: {
+    created: 'created the ticket',
+    status_changed: 'changed status from {old} to {new}',
+    reassigned: 'reassigned from {old} to {new}',
+    priority_changed: 'changed priority from {old} to {new}',
+    due_date_changed: 'changed due date from {old} to {new}',
+    edited: 'edited the ticket details',
+    someone: 'Someone',
+    none: 'none',
   },
 
   errors: {

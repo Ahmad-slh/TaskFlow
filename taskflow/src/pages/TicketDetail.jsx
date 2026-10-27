@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { useParams, useNavigate, Navigate } from 'react-router-dom'
+import { useParams, useNavigate, Navigate, Link } from 'react-router-dom'
 import {
   ArrowLeft,
   Loader2,
@@ -11,10 +11,12 @@ import {
   RotateCcw,
   XCircle,
   Send,
+  Pencil,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Separator } from '@/components/ui/separator'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -32,8 +34,11 @@ import {
 import { StatusBadge } from '@/components/tickets/StatusBadge'
 import { PriorityBadge } from '@/components/tickets/PriorityBadge'
 import { TypeBadge } from '@/components/tickets/TypeBadge'
+import { EditTicketDialog } from '@/components/tickets/EditTicketDialog'
+import { ActivityTimeline } from '@/components/tickets/ActivityTimeline'
 import {
   useTicket,
+  useUpdateTicket,
   useUpdateTicketStatus,
   useUploadAttachment,
 } from '@/hooks/useTickets'
@@ -41,7 +46,15 @@ import { useAddComment } from '@/hooks/useComments'
 import { useAuth } from '@/context/AuthContext'
 import { useTranslation } from '@/context/LanguageContext'
 import { toast } from '@/components/ui/sonner'
-import { formatDate, getInitials, timeAgo, friendlyError } from '@/lib/utils'
+import {
+  formatDate,
+  formatDay,
+  formatDurationShort,
+  getInitials,
+  timeAgo,
+  friendlyError,
+  isOverdue,
+} from '@/lib/utils'
 
 function MetaItem({ label, value }) {
   return (
@@ -52,10 +65,51 @@ function MetaItem({ label, value }) {
   )
 }
 
+/** Lets the assignee set / adjust the estimated hours. */
+function EstimateEditor({ ticket }) {
+  const { t } = useTranslation()
+  const updateTicket = useUpdateTicket()
+  const [value, setValue] = useState(ticket.estimated_hours ?? '')
+
+  async function save() {
+    const hours = String(value).trim()
+    if (hours !== '' && (!Number.isFinite(Number(hours)) || Number(hours) < 0)) {
+      toast.error(t('createTicket.estimatedHoursInvalid'))
+      return
+    }
+    try {
+      await updateTicket.mutateAsync({
+        ticketId: ticket.id,
+        values: { estimated_hours: hours },
+      })
+      toast.success(t('ticketDetail.updatedOk'))
+    } catch (error) {
+      toast.error(friendlyError(error, t('ticketDetail.updateFailed')))
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <Input
+        type="number"
+        min="0"
+        step="0.25"
+        className="h-8 w-24"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+      <Button size="sm" variant="outline" disabled={updateTicket.isPending} onClick={save}>
+        {updateTicket.isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+        {t('ticketDetail.setEstimate')}
+      </Button>
+    </div>
+  )
+}
+
 export default function TicketDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { user, role } = useAuth()
   const { t } = useTranslation()
   const { data: ticket, isLoading, isError } = useTicket(id)
 
@@ -65,6 +119,7 @@ export default function TicketDetail() {
 
   const fileInputRef = useRef(null)
   const [comment, setComment] = useState('')
+  const [editing, setEditing] = useState(false)
 
   if (isLoading) {
     return <TicketDetailSkeleton />
@@ -149,6 +204,10 @@ export default function TicketDetail() {
 
   const canCancel = isCreator && ['Open', 'Reopened'].includes(ticket.status)
   const canUpload = isCreator || isAssignee
+  const canEdit = isCreator && !['Done', 'Cancelled'].includes(ticket.status)
+  const overdue = isOverdue(ticket)
+  const actualTime =
+    ticket.status === 'Done' ? formatDurationShort(ticket.started_at, ticket.closed_at) : null
 
   return (
     <div className="space-y-6">
@@ -317,6 +376,8 @@ export default function TicketDetail() {
               </form>
             </CardContent>
           </Card>
+
+          <ActivityTimeline ticketId={ticket.id} />
         </div>
 
         {/* Right column — action panel */}
@@ -371,7 +432,14 @@ export default function TicketDetail() {
                 </AlertDialog>
               )}
 
-              {!devAction && !canCancel && (
+              {canEdit && (
+                <Button variant="outline" className="w-full" onClick={() => setEditing(true)}>
+                  <Pencil className="h-4 w-4" />
+                  {t('ticketDetail.edit')}
+                </Button>
+              )}
+
+              {!devAction && !canCancel && !canEdit && (
                 <p className="text-sm text-muted-foreground">
                   {t('ticketDetail.noActions')}
                 </p>
@@ -390,6 +458,46 @@ export default function TicketDetail() {
                   label={t('ticketDetail.priority')}
                   value={<PriorityBadge priority={ticket.priority} />}
                 />
+                <MetaItem
+                  label={t('ticketDetail.customer')}
+                  value={
+                    ticket.customer ? (
+                      role === 'employee' ? (
+                        <Link to={`/customers/${ticket.customer.id}`} className="text-primary hover:underline">
+                          {ticket.customer.name}
+                        </Link>
+                      ) : (
+                        ticket.customer.name
+                      )
+                    ) : (
+                      '—'
+                    )
+                  }
+                />
+                <MetaItem
+                  label={t('ticketDetail.dueDate')}
+                  value={
+                    <span className={overdue ? 'text-destructive' : undefined}>
+                      {formatDay(ticket.due_date)}
+                      {overdue && ` (${t('ticketDetail.overdue')})`}
+                    </span>
+                  }
+                />
+                <MetaItem
+                  label={t('ticketDetail.estimatedHours')}
+                  value={
+                    isAssignee && !['Done', 'Cancelled'].includes(ticket.status) ? (
+                      <EstimateEditor key={ticket.estimated_hours ?? 'none'} ticket={ticket} />
+                    ) : ticket.estimated_hours != null ? (
+                      t('ticketDetail.hours', { n: ticket.estimated_hours })
+                    ) : (
+                      '—'
+                    )
+                  }
+                />
+                {actualTime && (
+                  <MetaItem label={t('ticketDetail.actualTime')} value={actualTime} />
+                )}
                 <MetaItem label={t('ticketDetail.created')} value={formatDate(ticket.created_at)} />
                 {ticket.closed_at && (
                   <MetaItem label={t('ticketDetail.closed')} value={formatDate(ticket.closed_at)} />
@@ -399,6 +507,8 @@ export default function TicketDetail() {
           </Card>
         </div>
       </div>
+
+      {canEdit && <EditTicketDialog open={editing} onOpenChange={setEditing} ticket={ticket} />}
     </div>
   )
 }

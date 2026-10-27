@@ -96,3 +96,28 @@ export function friendlyError(error, fallback) {
 
   return dict.errors[message] || message
 }
+
+const CLOSED = ['Done', 'Cancelled']
+
+/** Local YYYY-MM-DD for "today" (matches a Postgres `date` column). */
+export function todayISO() {
+  const d = new Date()
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+}
+
+/** A ticket is overdue when its due date has passed and it is still open. */
+export function isOverdue(ticket) {
+  return !!ticket?.due_date && !CLOSED.includes(ticket.status) && ticket.due_date < todayISO()
+}
+
+/** Format a `date` column value (YYYY-MM-DD) without timezone shifts. */
+export function formatDay(value) {
+  if (!value) return '—'
+  const [y, m, d] = String(value).split('-').map(Number)
+  if (!y || !m || !d) return '—'
+  return format(new Date(y, m - 1, d), 'MMM d, yyyy', dateLocale())
+}
+
+/** Priority sort rank — higher is more urgent. */
+export const PRIORITY_RANK = { Critical: 4, High: 3, Medium: 2, Low: 1 }

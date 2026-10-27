@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { PlusCircle, Inbox } from 'lucide-react'
+import { PlusCircle, Inbox, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -23,6 +23,9 @@ import { useMyTickets, useUpdateTicketStatus } from '@/hooks/useTickets'
 import { useTranslation } from '@/context/LanguageContext'
 import { toast } from '@/components/ui/sonner'
 import { friendlyError } from '@/lib/utils'
+import { exportTicketsCsv } from '@/lib/ticketCsv'
+
+const getAssignee = (ticket) => ticket.assigned_profile
 
 export default function MyTickets() {
   const { data: tickets = [], isLoading } = useMyTickets()
@@ -53,12 +56,24 @@ export default function MyTickets() {
           <h1 className="text-2xl font-semibold">{t('myTickets.title')}</h1>
           <p className="text-sm text-muted-foreground">{t('myTickets.subtitle')}</p>
         </div>
-        <Button asChild>
-          <Link to="/create-ticket">
-            <PlusCircle className="h-4 w-4" />
-            {t('myTickets.createTicket')}
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            disabled={!filtered.length}
+            onClick={() =>
+              exportTicketsCsv(t, filtered, t('myTickets.assignedTo'), (r) => r.assigned_profile?.name)
+            }
+          >
+            <Download className="h-4 w-4" />
+            {t('table.exportCsv')}
+          </Button>
+          <Button asChild>
+            <Link to="/create-ticket">
+              <PlusCircle className="h-4 w-4" />
+              {t('myTickets.createTicket')}
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {hasNoTickets ? (
@@ -81,7 +96,13 @@ export default function MyTickets() {
         </Card>
       ) : (
         <>
-          <TicketFilters filters={filters} onChange={setFilters} />
+          <TicketFilters
+            filters={filters}
+            onChange={setFilters}
+            tickets={tickets}
+            personLabel={t('myTickets.assignedTo')}
+            getPerson={getAssignee}
+          />
           <TicketTable
             tickets={filtered}
             loading={isLoading}

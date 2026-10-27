@@ -4,6 +4,7 @@ import {
   PlusCircle,
   Ticket,
   Inbox,
+  Building2,
   X,
 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
@@ -14,6 +15,7 @@ const EMPLOYEE_NAV = [
   { to: '/dashboard', labelKey: 'nav.dashboard', icon: LayoutDashboard },
   { to: '/create-ticket', labelKey: 'nav.createTicket', icon: PlusCircle },
   { to: '/my-tickets', labelKey: 'nav.myTickets', icon: Ticket },
+  { to: '/customers', labelKey: 'nav.customers', icon: Building2 },
 ]
 
 const DEVELOPER_NAV = [

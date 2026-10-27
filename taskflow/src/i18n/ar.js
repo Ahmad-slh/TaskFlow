@@ -22,6 +22,7 @@ export default {
   },
 
   nav: {
+    customers: 'العملاء',
     dashboard: 'لوحة التحكم',
     createTicket: 'إنشاء تذكرة',
     myTickets: 'تذاكري',
@@ -57,6 +58,13 @@ export default {
   },
 
   dashboard: {
+    overdue: 'متأخرة',
+    criticalOpen: 'حرجة مفتوحة',
+    avgResolution: 'متوسط وقت الحل',
+    byDeveloper: 'التذاكر حسب المطوّر',
+    topCustomers: 'أكثر العملاء تذاكر',
+    ticketsCount: '{count} تذكرة',
+    noData: 'لا توجد بيانات بعد.',
     welcome: 'مرحبًا بعودتك',
     welcomeNamed: 'مرحبًا بعودتك، {name}',
     subtitleDeveloper: 'هذه هي التذاكر المسندة إليك.',
@@ -74,6 +82,14 @@ export default {
   },
 
   createTicket: {
+    customer: 'العميل',
+    selectCustomer: 'اختر عميلاً',
+    loadingCustomers: 'جارٍ تحميل العملاء…',
+    noCustomer: 'بدون عميل (داخلية)',
+    addCustomer: 'إضافة عميل جديد',
+    dueDate: 'تاريخ الاستحقاق',
+    estimatedHours: 'الوقت المقدّر (ساعات)',
+    estimatedHoursInvalid: 'أدخل عدد ساعات صحيحاً',
     title: 'إنشاء تذكرة',
     subtitle: 'صف المشكلة أو الطلب وأسنده إلى مطوّر.',
     detailsTitle: 'تفاصيل التذكرة',
@@ -129,6 +145,20 @@ export default {
   },
 
   ticketDetail: {
+    customer: 'العميل',
+    dueDate: 'تاريخ الاستحقاق',
+    estimatedHours: 'المقدّر',
+    actualTime: 'الوقت الفعلي',
+    hours: '{n} س',
+    overdue: 'متأخرة',
+    edit: 'تعديل التذكرة',
+    editTitle: 'تعديل التذكرة',
+    save: 'حفظ التغييرات',
+    updatedOk: 'تم تحديث التذكرة',
+    updateFailed: 'تعذّر تحديث التذكرة.',
+    activity: 'سجل النشاط',
+    noActivity: 'لا يوجد نشاط بعد.',
+    setEstimate: 'تحديد التقدير',
     notFoundTitle: 'التذكرة غير موجودة',
     notFoundSubtitle: 'ربما تمت إزالتها، أو ليس لديك صلاحية الوصول إليها.',
     backToDashboard: 'العودة إلى لوحة التحكم',
@@ -167,6 +197,10 @@ export default {
   },
 
   table: {
+    customer: 'العميل',
+    dueDate: 'الاستحقاق',
+    overdue: 'متأخرة',
+    exportCsv: 'تصدير CSV',
     number: '#',
     title: 'العنوان',
     type: 'النوع',
@@ -187,6 +221,13 @@ export default {
   },
 
   filters: {
+    customer: 'العميل',
+    allCustomers: 'كل العملاء',
+    person: 'الشخص',
+    allPeople: 'الجميع',
+    overdueOnly: 'المتأخرة فقط',
+    dueFrom: 'الاستحقاق من',
+    dueTo: 'الاستحقاق إلى',
     searchPlaceholder: 'البحث بالعنوان…',
     status: 'الحالة',
     priority: 'الأولوية',
@@ -213,6 +254,7 @@ export default {
     Reopened: 'أُعيد فتحها',
   },
   priority: {
+    Critical: 'حرجة',
     All: 'الكل',
     Low: 'منخفضة',
     Medium: 'متوسطة',
@@ -223,6 +265,55 @@ export default {
     Bug: 'خلل',
     Task: 'مهمة',
     Request: 'طلب',
+  },
+
+  customers: {
+    title: 'العملاء',
+    subtitle: 'إدارة الشركات والعملاء الذين تفتح لهم التذاكر.',
+    add: 'إضافة عميل',
+    edit: 'تعديل العميل',
+    searchPlaceholder: 'ابحث في العملاء…',
+    allStatuses: 'كل الحالات',
+    empty: 'لا يوجد عملاء بعد. أضف أول عميل.',
+    noMatches: 'لا يوجد عملاء مطابقون للبحث.',
+    name: 'الاسم',
+    company: 'الشركة',
+    phone: 'الهاتف',
+    email: 'البريد الإلكتروني',
+    address: 'العنوان',
+    city: 'المدينة',
+    contactPerson: 'شخص التواصل',
+    notes: 'ملاحظات',
+    status: 'الحالة',
+    ticketsTitle: 'التذاكر',
+    noTickets: 'لا توجد تذاكر لهذا العميل بعد.',
+    nameMin: 'يجب أن يكون الاسم حرفين على الأقل',
+    emailInvalid: 'أدخل بريداً إلكترونياً صحيحاً',
+    save: 'حفظ',
+    cancel: 'إلغاء',
+    created: 'تمت إضافة العميل',
+    updated: 'تم تحديث العميل',
+    failed: 'تعذّر حفظ العميل.',
+    notFound: 'العميل غير موجود',
+    back: 'العودة إلى العملاء',
+    view: 'عرض',
+    ticketCount: 'التذاكر',
+  },
+
+  customerStatus: {
+    Active: 'فعّال',
+    Inactive: 'موقوف',
+  },
+
+  activity: {
+    created: 'أنشأ التذكرة',
+    status_changed: 'غيّر الحالة من {old} إلى {new}',
+    reassigned: 'أعاد الإسناد من {old} إلى {new}',
+    priority_changed: 'غيّر الأولوية من {old} إلى {new}',
+    due_date_changed: 'غيّر تاريخ الاستحقاق من {old} إلى {new}',
+    edited: 'عدّل تفاصيل التذكرة',
+    someone: 'شخص ما',
+    none: 'لا أحد',
   },
 
   errors: {

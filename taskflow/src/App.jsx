@@ -11,6 +11,8 @@ import CreateTicket from '@/pages/CreateTicket'
 import MyTickets from '@/pages/MyTickets'
 import AssignedTickets from '@/pages/AssignedTickets'
 import TicketDetail from '@/pages/TicketDetail'
+import Customers from '@/pages/Customers'
+import CustomerDetail from '@/pages/CustomerDetail'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -88,6 +90,22 @@ function AppRoutes() {
           element={
             <RoleRoute roles={['developer']}>
               <AssignedTickets />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="/customers"
+          element={
+            <RoleRoute roles={['employee']}>
+              <Customers />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="/customers/:id"
+          element={
+            <RoleRoute roles={['employee']}>
+              <CustomerDetail />
             </RoleRoute>
           }
         />

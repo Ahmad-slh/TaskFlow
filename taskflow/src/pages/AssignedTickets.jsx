@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { Inbox } from 'lucide-react'
+import { Inbox, Download } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { TicketTable } from '@/components/tickets/TicketTable'
 import {
@@ -9,6 +10,9 @@ import {
 } from '@/components/tickets/TicketFilters'
 import { useAssignedTickets } from '@/hooks/useTickets'
 import { useTranslation } from '@/context/LanguageContext'
+import { exportTicketsCsv } from '@/lib/ticketCsv'
+
+const getCreator = (ticket) => ticket.creator_profile
 
 function StatPill({ label, count, className }) {
   return (
@@ -37,9 +41,21 @@ export default function AssignedTickets() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">{t('assigned.title')}</h1>
-        <p className="text-sm text-muted-foreground">{t('assigned.subtitle')}</p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold">{t('assigned.title')}</h1>
+          <p className="text-sm text-muted-foreground">{t('assigned.subtitle')}</p>
+        </div>
+        <Button
+          variant="outline"
+          disabled={!filtered.length}
+          onClick={() =>
+            exportTicketsCsv(t, filtered, t('assigned.createdBy'), (r) => r.creator_profile?.name)
+          }
+        >
+          <Download className="h-4 w-4" />
+          {t('table.exportCsv')}
+        </Button>
       </div>
 
       <div className="flex flex-wrap gap-3">
@@ -61,7 +77,13 @@ export default function AssignedTickets() {
         </Card>
       ) : (
         <>
-          <TicketFilters filters={filters} onChange={setFilters} />
+          <TicketFilters
+            filters={filters}
+            onChange={setFilters}
+            tickets={tickets}
+            personLabel={t('assigned.createdBy')}
+            getPerson={getCreator}
+          />
           <TicketTable
             tickets={filtered}
             loading={isLoading}

@@ -3,12 +3,14 @@ import { Outlet } from 'react-router-dom'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { TopBar } from '@/components/layout/TopBar'
 import { useNotificationsRealtime } from '@/hooks/useNotifications'
+import { useTicketsRealtime } from '@/hooks/useTickets'
 
 export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   // Subscribe to realtime notifications for the whole authenticated app.
   useNotificationsRealtime()
+  useTicketsRealtime()
 
   return (
     <div className="flex min-h-screen bg-background">

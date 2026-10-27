@@ -178,7 +178,8 @@ export default function Dashboard() {
     .map((tk) => new Date(tk.closed_at) - new Date(tk.started_at))
     .filter((ms) => Number.isFinite(ms) && ms >= 0)
   const avgResolution = durations.length
-    ? formatDurationShort(0, durations.reduce((a, b) => a + b, 0) / durations.length)
+    ? // Pass Dates: formatDurationShort treats falsy bounds (like epoch 0) as missing.
+      formatDurationShort(new Date(0), new Date(durations.reduce((a, b) => a + b, 0) / durations.length))
     : '—'
 
   const byDeveloper = countBy(tickets, (tk) => tk.assigned_profile?.name)

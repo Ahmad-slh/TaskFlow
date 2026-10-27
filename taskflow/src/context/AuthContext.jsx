@@ -59,6 +59,13 @@ export function AuthProvider({ children }) {
     }
   }, [fetchProfile])
 
+  // Re-read the profile row (e.g. after the user edits their name).
+  const refreshProfile = useCallback(async () => {
+    if (!session?.user) return
+    const p = await fetchProfile(session.user.id)
+    if (p) setProfile(p)
+  }, [session, fetchProfile])
+
   const signIn = useCallback(async (email, password) => {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) throw error
@@ -78,6 +85,7 @@ export function AuthProvider({ children }) {
     loading,
     signIn,
     signOut,
+    refreshProfile,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

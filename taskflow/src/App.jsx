@@ -14,6 +14,7 @@ import AssignedTickets from '@/pages/AssignedTickets'
 import TicketDetail from '@/pages/TicketDetail'
 import Customers from '@/pages/Customers'
 import CustomerDetail from '@/pages/CustomerDetail'
+import Profile from '@/pages/Profile'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -111,6 +112,7 @@ function AppRoutes() {
           }
         />
         <Route path="/tickets/:id" element={<TicketDetail />} />
+        <Route path="/profile" element={<Profile />} />
       </Route>
 
       <Route path="/" element={<Navigate to="/dashboard" replace />} />

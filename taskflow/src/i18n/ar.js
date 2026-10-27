@@ -22,6 +22,11 @@ export default {
   },
 
   nav: {
+    profile: 'الملف الشخصي',
+    sections: {
+      main: 'الرئيسية',
+      manage: 'الإدارة',
+    },
     customers: 'العملاء',
     dashboard: 'لوحة التحكم',
     createTicket: 'إنشاء تذكرة',
@@ -30,12 +35,15 @@ export default {
   },
 
   sidebar: {
+    collapse: 'طيّ القائمة',
+    expand: 'توسيع القائمة',
     appName: 'TaskFlow',
     tagline: 'TaskFlow · التذاكر الداخلية',
     closeSidebar: 'إغلاق الشريط الجانبي',
   },
 
   topbar: {
+    search: 'ابحث في التذاكر والعملاء…',
     openMenu: 'فتح القائمة',
     notifications: 'الإشعارات',
     profile: 'الملف الشخصي',
@@ -314,6 +322,25 @@ export default {
     edited: 'عدّل تفاصيل التذكرة',
     someone: 'شخص ما',
     none: 'لا أحد',
+  },
+
+  theme: {
+    toggle: 'تبديل المظهر',
+    light: 'فاتح',
+    dark: 'داكن',
+    system: 'النظام',
+    title: 'المظهر',
+  },
+
+  command: {
+    title: 'بحث سريع',
+    description: 'ابحث في التذاكر والعملاء والصفحات، أو نفّذ إجراءً سريعاً.',
+    placeholder: 'اكتب رقم تذكرة أو عنواناً أو عميلاً أو صفحة…',
+    empty: 'لا توجد نتائج.',
+    tickets: 'التذاكر',
+    customers: 'العملاء',
+    pages: 'الصفحات',
+    actions: 'إجراءات',
   },
 
   errors: {

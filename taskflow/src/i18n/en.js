@@ -22,6 +22,11 @@ export default {
   },
 
   nav: {
+    profile: 'Profile',
+    sections: {
+      main: 'Main',
+      manage: 'Manage',
+    },
     customers: 'Customers',
     dashboard: 'Dashboard',
     createTicket: 'Create Ticket',
@@ -30,12 +35,15 @@ export default {
   },
 
   sidebar: {
+    collapse: 'Collapse sidebar',
+    expand: 'Expand sidebar',
     appName: 'TaskFlow',
     tagline: 'TaskFlow · Internal Tickets',
     closeSidebar: 'Close sidebar',
   },
 
   topbar: {
+    search: 'Search tickets, customers…',
     openMenu: 'Open menu',
     notifications: 'Notifications',
     profile: 'Profile',
@@ -315,6 +323,25 @@ export default {
     edited: 'edited the ticket details',
     someone: 'Someone',
     none: 'none',
+  },
+
+  theme: {
+    toggle: 'Toggle theme',
+    light: 'Light',
+    dark: 'Dark',
+    system: 'System',
+    title: 'Theme',
+  },
+
+  command: {
+    title: 'Quick search',
+    description: 'Search tickets, customers and pages, or run a quick action.',
+    placeholder: 'Type a ticket number, title, customer or page…',
+    empty: 'No results found.',
+    tickets: 'Tickets',
+    customers: 'Customers',
+    pages: 'Pages',
+    actions: 'Actions',
   },
 
   errors: {

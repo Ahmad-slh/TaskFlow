@@ -1,24 +1,25 @@
-import { cn } from '@/lib/utils'
+import { Flame } from 'lucide-react'
+import { Pill } from '@/components/ui/pill'
 import { useTranslation } from '@/context/LanguageContext'
 
-const PRIORITY_STYLES = {
-  Low: 'bg-gray-100 text-gray-600',
-  Medium: 'bg-orange-100 text-orange-600',
-  High: 'bg-red-100 text-red-600',
-  Critical: 'bg-red-600 text-white',
+const PRIORITY_TONES = {
+  Low: 'gray',
+  Medium: 'amber',
+  High: 'orange',
+  Critical: 'red',
 }
 
 export function PriorityBadge({ priority, className }) {
   const { t } = useTranslation()
+  const critical = priority === 'Critical'
   return (
-    <span
-      className={cn(
-        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
-        PRIORITY_STYLES[priority] || 'bg-gray-100 text-gray-600',
-        className
-      )}
+    <Pill
+      tone={PRIORITY_TONES[priority] || 'gray'}
+      solid={critical}
+      icon={critical ? Flame : undefined}
+      className={className}
     >
       {t(`priority.${priority}`)}
-    </span>
+    </Pill>
   )
 }

@@ -1,5 +1,17 @@
 import { useState } from 'react'
-import { Bell, Menu, LogOut, User, Languages } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import {
+  Bell,
+  Menu,
+  LogOut,
+  User,
+  Languages,
+  Search,
+  Sun,
+  Moon,
+  PanelLeftClose,
+  PanelLeftOpen,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
@@ -13,28 +25,72 @@ import {
 import { NotificationPanel } from '@/components/notifications/NotificationPanel'
 import { useAuth } from '@/context/AuthContext'
 import { useTranslation } from '@/context/LanguageContext'
+import { useTheme } from '@/context/ThemeContext'
 import { useNotifications } from '@/hooks/useNotifications'
 import { getInitials } from '@/lib/utils'
 
-export function TopBar({ onMenuClick }) {
+const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
+
+export function TopBar({ onMenuClick, onSearchClick, collapsed, onToggleCollapse }) {
   const { profile, signOut } = useAuth()
   const { t, toggleLanguage } = useTranslation()
+  const { resolved, toggleTheme } = useTheme()
   const { data: notifications = [] } = useNotifications()
   const [panelOpen, setPanelOpen] = useState(false)
 
   const unreadCount = notifications.filter((n) => !n.is_read).length
+  const CollapseIcon = collapsed ? PanelLeftOpen : PanelLeftClose
 
   return (
-    <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b bg-card px-4 lg:px-6">
-      <button
-        className="text-muted-foreground lg:hidden"
+    <header className="sticky top-0 z-20 flex h-16 items-center gap-2 border-b bg-card/80 px-4 backdrop-blur supports-[backdrop-filter]:bg-card/70 lg:px-6">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="lg:hidden"
         onClick={onMenuClick}
         aria-label={t('topbar.openMenu')}
       >
-        <Menu className="h-6 w-6" />
+        <Menu className="h-5 w-5" />
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="icon"
+        className="hidden lg:inline-flex"
+        onClick={onToggleCollapse}
+        aria-label={t(collapsed ? 'sidebar.expand' : 'sidebar.collapse')}
+        title={t(collapsed ? 'sidebar.expand' : 'sidebar.collapse')}
+      >
+        <CollapseIcon className="h-5 w-5 rtl:-scale-x-100" />
+      </Button>
+
+      <button
+        type="button"
+        onClick={onSearchClick}
+        aria-label={t('topbar.search')}
+        className="group flex h-10 min-w-0 flex-1 items-center gap-2 rounded-lg border bg-background px-3 text-sm text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground sm:max-w-sm sm:flex-none sm:basis-80"
+      >
+        <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
+        <span className="flex-1 truncate text-start">{t('topbar.search')}</span>
+        <kbd
+          dir="ltr"
+          className="hidden rounded border bg-muted px-1.5 py-0.5 font-sans text-[11px] font-medium sm:inline-block"
+        >
+          {isMac ? '⌘' : 'Ctrl'} K
+        </kbd>
       </button>
 
-      <div className="ms-auto flex items-center gap-2">
+      <div className="ms-auto flex items-center gap-1">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleTheme}
+          aria-label={t('theme.toggle')}
+          title={t('theme.toggle')}
+        >
+          {resolved === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+        </Button>
+
         <Button
           variant="ghost"
           size="sm"
@@ -43,7 +99,7 @@ export function TopBar({ onMenuClick }) {
           aria-label={t('language.toggleAria')}
         >
           <Languages className="h-4 w-4" />
-          {t('language.switchTo')}
+          <span className="hidden sm:inline">{t('language.switchTo')}</span>
         </Button>
 
         <Button
@@ -63,9 +119,12 @@ export function TopBar({ onMenuClick }) {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-2 rounded-full outline-none">
+            <button
+              className="ms-1 flex items-center gap-2 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              aria-label={profile?.name}
+            >
               <Avatar className="h-9 w-9">
-                <AvatarFallback className="bg-primary/10 text-primary">
+                <AvatarFallback className="bg-primary/10 font-semibold text-primary">
                   {getInitials(profile?.name)}
                 </AvatarFallback>
               </Avatar>
@@ -81,9 +140,11 @@ export function TopBar({ onMenuClick }) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem disabled>
-              <User className="h-4 w-4" />
-              {t('topbar.profile')}
+            <DropdownMenuItem asChild>
+              <Link to="/profile">
+                <User className="h-4 w-4" />
+                {t('topbar.profile')}
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={signOut} className="text-destructive">
               <LogOut className="h-4 w-4" />

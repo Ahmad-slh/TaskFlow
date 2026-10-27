@@ -4,35 +4,136 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%; /* #F8F9FA main content */
-    --foreground: 222 47% 11%; /* #111827 text primary */
+    --background: 210 40% 98%; /* #F8FAFC */
+    --foreground: 217 33% 17%; /* #1E293B */
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 217 33% 17%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 217 33% 17%;
 
-    --primary: 239 84% 67%; /* #6366F1 indigo-500 */
+    --primary: 221 83% 53%; /* #2563EB */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 214 32% 94%;
+    --secondary-foreground: 217 33% 17%;
 
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%; /* #6B7280 text secondary */
+    --muted: 214 32% 95%;
+    --muted-foreground: 215 19% 35%; /* #475569 */
 
-    --accent: 239 84% 67%;
+    /* "accent" is the hover/selection tint used across shadcn primitives. */
+    --accent: 221 83% 53%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%; /* #EF4444 */
+    --destructive: 0 72% 51%; /* #DC2626 */
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 6% 90%; /* #E4E4E7 */
-    --input: 240 6% 90%;
-    --ring: 239 84% 67%;
+    --warning: 21 90% 48%; /* #EA580C */
+    --warning-foreground: 0 0% 100%;
 
-    --radius: 0.5rem;
+    --border: 214 32% 91%; /* #E2E8F0 */
+    --input: 214 32% 88%;
+    --ring: 221 83% 53%;
+
+    --radius: 0.75rem;
+
+    /* Sidebar */
+    --sidebar: 222 47% 9%;
+    --sidebar-2: 224 50% 14%;
+    --sidebar-foreground: 215 20% 68%;
+    --sidebar-active: 0 0% 100%;
+    --sidebar-accent: 222 30% 18%;
+
+    /* Semantic tones: dot / soft background / text. Used by status, priority and type badges. */
+    --tone-blue: 217 91% 60%;
+    --tone-blue-bg: 214 95% 93%;
+    --tone-blue-fg: 224 76% 38%;
+    --tone-amber: 38 92% 50%;
+    --tone-amber-bg: 48 96% 89%;
+    --tone-amber-fg: 26 83% 27%;
+    --tone-green: 142 71% 40%;
+    --tone-green-bg: 141 79% 90%;
+    --tone-green-fg: 142 72% 24%;
+    --tone-red: 0 72% 51%;
+    --tone-red-bg: 0 86% 94%;
+    --tone-red-fg: 0 70% 35%;
+    --tone-purple: 262 83% 58%;
+    --tone-purple-bg: 270 95% 94%;
+    --tone-purple-fg: 263 70% 38%;
+    --tone-gray: 215 16% 47%;
+    --tone-gray-bg: 214 32% 93%;
+    --tone-gray-fg: 215 25% 27%;
+    --tone-orange: 25 95% 53%;
+    --tone-orange-bg: 33 100% 92%;
+    --tone-orange-fg: 21 90% 32%;
+
+    --shadow-soft: 0 1px 2px hsl(222 47% 11% / 0.04), 0 4px 16px hsl(222 47% 11% / 0.05);
+    color-scheme: light;
+  }
+
+  .dark {
+    --background: 222 47% 6%;
+    --foreground: 210 40% 96%;
+
+    --card: 222 40% 10%;
+    --card-foreground: 210 40% 96%;
+
+    --popover: 222 40% 11%;
+    --popover-foreground: 210 40% 96%;
+
+    --primary: 221 83% 56%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 96%;
+
+    --muted: 217 33% 15%;
+    --muted-foreground: 215 20% 70%;
+
+    --accent: 217 91% 65%;
+    --accent-foreground: 222 47% 8%;
+
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --warning: 25 95% 55%;
+    --warning-foreground: 222 47% 8%;
+
+    --border: 217 33% 19%;
+    --input: 217 33% 22%;
+    --ring: 217 91% 65%;
+
+    --sidebar: 222 47% 5%;
+    --sidebar-2: 224 45% 9%;
+    --sidebar-foreground: 215 20% 65%;
+    --sidebar-active: 0 0% 100%;
+    --sidebar-accent: 222 30% 15%;
+
+    --tone-blue: 217 91% 65%;
+    --tone-blue-bg: 222 55% 22%;
+    --tone-blue-fg: 213 94% 80%;
+    --tone-amber: 43 96% 56%;
+    --tone-amber-bg: 35 60% 18%;
+    --tone-amber-fg: 45 93% 72%;
+    --tone-green: 142 69% 50%;
+    --tone-green-bg: 145 45% 16%;
+    --tone-green-fg: 141 70% 72%;
+    --tone-red: 0 84% 62%;
+    --tone-red-bg: 0 50% 20%;
+    --tone-red-fg: 0 90% 80%;
+    --tone-purple: 262 90% 72%;
+    --tone-purple-bg: 265 40% 24%;
+    --tone-purple-fg: 270 90% 82%;
+    --tone-gray: 215 20% 65%;
+    --tone-gray-bg: 217 20% 22%;
+    --tone-gray-fg: 214 20% 80%;
+    --tone-orange: 25 95% 60%;
+    --tone-orange-bg: 24 55% 20%;
+    --tone-orange-fg: 30 95% 74%;
+
+    --shadow-soft: 0 1px 2px hsl(0 0% 0% / 0.3), 0 4px 16px hsl(0 0% 0% / 0.25);
+    color-scheme: dark;
   }
 }
 
@@ -40,7 +141,51 @@
   * {
     @apply border-border;
   }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+  /* Visible keyboard focus everywhere (never removed, only restyled). */
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  [role='tab'],
+  [role='combobox'],
+  [role='menuitem'],
+  select,
+  summary,
+  label[for] {
+    cursor: pointer;
+  }
+}
+
+@layer components {
+  .surface-gradient {
+    background-image: linear-gradient(160deg, hsl(var(--sidebar)) 0%, hsl(var(--sidebar-2)) 100%);
+  }
+  .brand-gradient {
+    background-image: linear-gradient(135deg, hsl(221 83% 53%) 0%, hsl(243 75% 59%) 100%);
+  }
+  /* Thin, unobtrusive scrollbars for dense lists. */
+  .scroll-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

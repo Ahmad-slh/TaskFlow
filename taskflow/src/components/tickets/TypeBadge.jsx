@@ -1,23 +1,19 @@
-import { cn } from '@/lib/utils'
+import { Bug, CheckSquare, MessageSquare } from 'lucide-react'
+import { Pill } from '@/components/ui/pill'
 import { useTranslation } from '@/context/LanguageContext'
 
-const TYPE_STYLES = {
-  Bug: 'bg-red-50 text-red-500',
-  Task: 'bg-blue-50 text-blue-500',
-  Request: 'bg-green-50 text-green-500',
+const TYPES = {
+  Bug: { tone: 'red', icon: Bug },
+  Task: { tone: 'blue', icon: CheckSquare },
+  Request: { tone: 'green', icon: MessageSquare },
 }
 
 export function TypeBadge({ type, className }) {
   const { t } = useTranslation()
+  const config = TYPES[type] ?? { tone: 'gray' }
   return (
-    <span
-      className={cn(
-        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
-        TYPE_STYLES[type] || 'bg-gray-50 text-gray-500',
-        className
-      )}
-    >
+    <Pill tone={config.tone} icon={config.icon} className={className}>
       {t(`type.${type}`)}
-    </span>
+    </Pill>
   )
 }

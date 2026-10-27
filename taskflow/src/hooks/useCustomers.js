@@ -3,9 +3,10 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/context/AuthContext'
 
 /** All customers (optionally only the active ones, for the ticket form). */
-export function useCustomers({ activeOnly = false } = {}) {
+export function useCustomers({ activeOnly = false, enabled = true } = {}) {
   return useQuery({
     queryKey: ['customers', { activeOnly }],
+    enabled,
     queryFn: async () => {
       let query = supabase.from('customers').select('*, tickets(count)').order('name', { ascending: true })
       if (activeOnly) query = query.eq('status', 'Active')

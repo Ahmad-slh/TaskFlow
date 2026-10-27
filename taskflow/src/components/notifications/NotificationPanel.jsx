@@ -33,8 +33,8 @@ export function NotificationPanel({ open, onClose }) {
       {/* Overlay */}
       <div
         className={cn(
-          'fixed inset-0 z-40 bg-black/40 transition-opacity',
-          open ? 'opacity-100' : 'pointer-events-none opacity-0'
+          'fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity',
+          open ? 'opacity-100' : 'pointer-events-none invisible opacity-0'
         )}
         onClick={onClose}
       />
@@ -43,7 +43,7 @@ export function NotificationPanel({ open, onClose }) {
       <aside
         className={cn(
           'fixed end-0 top-0 z-50 flex h-full w-full max-w-sm flex-col border-s bg-card shadow-xl transition-transform duration-200',
-          open ? 'translate-x-0' : 'ltr:translate-x-full rtl:-translate-x-full'
+          open ? 'visible translate-x-0' : 'invisible ltr:translate-x-full rtl:-translate-x-full'
         )}
       >
         <div className="flex items-center justify-between border-b px-4 py-3">
@@ -80,7 +80,7 @@ export function NotificationPanel({ open, onClose }) {
                     type="button"
                     onClick={() => handleClick(n)}
                     className={cn(
-                      'flex w-full flex-col items-start gap-1 px-4 py-3 text-left transition-colors hover:bg-muted/60',
+                      'flex w-full flex-col items-start gap-1 px-4 py-3 text-start transition-colors hover:bg-muted/60',
                       !n.is_read && 'bg-primary/5'
                     )}
                   >

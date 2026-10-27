@@ -40,12 +40,14 @@ export function LanguageProvider({ children }) {
   }, [language, dir])
 
   const setLanguage = useCallback((lang) => {
-    if (lang === 'ar' || lang === 'en') setLanguageState(lang)
+    if (lang !== 'ar' && lang !== 'en') return
+    window.localStorage.setItem(STORAGE_KEY, lang)
+    setLanguageState(lang)
   }, [])
 
   const toggleLanguage = useCallback(() => {
-    setLanguageState((prev) => (prev === 'en' ? 'ar' : 'en'))
-  }, [])
+    setLanguage(language === 'en' ? 'ar' : 'en')
+  }, [language, setLanguage])
 
   // t(key, vars): look up the active dictionary, fall back to English, then the raw key.
   const t = useCallback(

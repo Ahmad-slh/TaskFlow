@@ -1,80 +1,96 @@
 import { useMemo, useState } from 'react'
-import { Inbox, Download } from 'lucide-react'
+import { Inbox, Download, Table2, Kanban, SearchX } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { EmptyState } from '@/components/ui/empty-state'
+import { PageHeader } from '@/components/ui/page-header'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { TicketTable } from '@/components/tickets/TicketTable'
-import {
-  TicketFilters,
-  DEFAULT_FILTERS,
-  applyTicketFilters,
-} from '@/components/tickets/TicketFilters'
-import { useAssignedTickets } from '@/hooks/useTickets'
+import { TicketKanban } from '@/components/tickets/TicketKanban'
+import { TicketFilters, applyTicketFilters } from '@/components/tickets/TicketFilters'
+import { useAssignedTickets, useUpdateTicketStatus } from '@/hooks/useTickets'
+import { useTicketFilters } from '@/hooks/useTicketFilters'
 import { useTranslation } from '@/context/LanguageContext'
+import { toast } from '@/components/ui/sonner'
+import { friendlyError } from '@/lib/utils'
 import { exportTicketsCsv } from '@/lib/ticketCsv'
 
 const getCreator = (ticket) => ticket.creator_profile
+const getCreatorName = (ticket) => ticket.creator_profile?.name
 
-function StatPill({ label, count, className }) {
+const PILL_DOT = {
+  blue: 'bg-tone-blue',
+  amber: 'bg-tone-amber',
+  green: 'bg-tone-green',
+}
+
+function StatPill({ label, count, tone }) {
   return (
-    <div className="flex items-center gap-2 rounded-lg border bg-card px-4 py-2">
-      <span className={`h-2.5 w-2.5 rounded-full ${className}`} />
+    <div className="flex items-center gap-2 rounded-xl border bg-card px-4 py-2 shadow-soft">
+      <span className={`h-2.5 w-2.5 rounded-full ${PILL_DOT[tone]}`} aria-hidden="true" />
       <span className="text-sm text-muted-foreground">{label}</span>
-      <span className="text-sm font-semibold">{count}</span>
+      <span className="text-sm font-bold">{count}</span>
     </div>
   )
 }
 
 export default function AssignedTickets() {
   const { data: tickets = [], isLoading } = useAssignedTickets()
+  const updateStatus = useUpdateTicketStatus()
   const { t } = useTranslation()
-  const [filters, setFilters] = useState(DEFAULT_FILTERS)
+  const { filters, setFilters, view, setView } = useTicketFilters()
+  const [movingId, setMovingId] = useState(null)
 
   const filtered = useMemo(() => applyTicketFilters(tickets, filters), [tickets, filters])
 
   const counts = {
-    open: tickets.filter((t) => t.status === 'Open').length,
-    inProgress: tickets.filter((t) => t.status === 'In Progress').length,
-    done: tickets.filter((t) => t.status === 'Done').length,
+    open: tickets.filter((tk) => tk.status === 'Open' || tk.status === 'Reopened').length,
+    inProgress: tickets.filter((tk) => tk.status === 'In Progress').length,
+    done: tickets.filter((tk) => tk.status === 'Done').length,
   }
 
   const hasNoTickets = !isLoading && tickets.length === 0
 
+  async function moveTicket(ticket, status) {
+    setMovingId(ticket.id)
+    try {
+      await updateStatus.mutateAsync({ ticketId: ticket.id, status })
+      toast.success(t('kanban.moved', { status: t(`status.${status}`) }))
+    } catch (error) {
+      toast.error(friendlyError(error, t('ticketDetail.statusFailed')))
+    } finally {
+      setMovingId(null)
+    }
+  }
+
+  const noMatches = (
+    <EmptyState icon={SearchX} title={t('assigned.noMatches')} className="bg-card" />
+  )
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold">{t('assigned.title')}</h1>
-          <p className="text-sm text-muted-foreground">{t('assigned.subtitle')}</p>
-        </div>
-        <Button
-          variant="outline"
-          disabled={!filtered.length}
-          onClick={() =>
-            exportTicketsCsv(t, filtered, t('assigned.createdBy'), (r) => r.creator_profile?.name)
-          }
-        >
-          <Download className="h-4 w-4" />
-          {t('table.exportCsv')}
-        </Button>
-      </div>
+      <PageHeader
+        title={t('assigned.title')}
+        description={t('assigned.subtitle')}
+        actions={
+          <Button
+            variant="outline"
+            disabled={!filtered.length}
+            onClick={() => exportTicketsCsv(t, filtered, t('assigned.createdBy'), getCreatorName)}
+          >
+            <Download className="h-4 w-4" />
+            <span className="hidden sm:inline">{t('table.exportCsv')}</span>
+          </Button>
+        }
+      />
 
       <div className="flex flex-wrap gap-3">
-        <StatPill label={t('assigned.open')} count={counts.open} className="bg-blue-500" />
-        <StatPill
-          label={t('assigned.inProgress')}
-          count={counts.inProgress}
-          className="bg-yellow-500"
-        />
-        <StatPill label={t('assigned.done')} count={counts.done} className="bg-green-500" />
+        <StatPill label={t('assigned.open')} count={counts.open} tone="blue" />
+        <StatPill label={t('assigned.inProgress')} count={counts.inProgress} tone="amber" />
+        <StatPill label={t('assigned.done')} count={counts.done} tone="green" />
       </div>
 
       {hasNoTickets ? (
-        <Card>
-          <CardContent className="flex flex-col items-center gap-3 p-12 text-center">
-            <Inbox className="h-10 w-10 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">{t('assigned.empty')}</p>
-          </CardContent>
-        </Card>
+        <EmptyState icon={Inbox} title={t('assigned.empty')} className="bg-card" />
       ) : (
         <>
           <TicketFilters
@@ -84,21 +100,45 @@ export default function AssignedTickets() {
             personLabel={t('assigned.createdBy')}
             getPerson={getCreator}
           />
-          <TicketTable
-            tickets={filtered}
-            loading={isLoading}
-            personColumn={{
-              header: t('assigned.createdBy'),
-              getName: (row) => row.creator_profile?.name,
-            }}
-            emptyState={
-              <Card>
-                <CardContent className="p-10 text-center text-sm text-muted-foreground">
-                  {t('assigned.noMatches')}
-                </CardContent>
-              </Card>
-            }
-          />
+
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-sm text-muted-foreground" aria-live="polite">
+              {t('dashboard.ticketsCount', { count: filtered.length })}
+            </p>
+            <Tabs value={view} onValueChange={setView}>
+              <TabsList>
+                <TabsTrigger value="table">
+                  <Table2 />
+                  {t('view.table')}
+                </TabsTrigger>
+                <TabsTrigger value="board">
+                  <Kanban />
+                  {t('view.board')}
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+
+          {view === 'board' ? (
+            filtered.length || isLoading ? (
+              <TicketKanban
+                tickets={filtered}
+                canMove
+                onMove={moveTicket}
+                movingId={movingId}
+                getPersonName={getCreatorName}
+              />
+            ) : (
+              noMatches
+            )
+          ) : (
+            <TicketTable
+              tickets={filtered}
+              loading={isLoading}
+              personColumn={{ header: t('assigned.createdBy'), getName: getCreatorName }}
+              emptyState={noMatches}
+            />
+          )}
         </>
       )}
     </div>

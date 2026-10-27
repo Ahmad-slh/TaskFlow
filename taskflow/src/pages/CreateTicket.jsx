@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { PageHeader } from '@/components/ui/page-header'
 import { TicketFormFields, ticketSchema } from '@/components/tickets/TicketFormFields'
 import { useCreateTicket } from '@/hooks/useTickets'
 import { useTranslation } from '@/context/LanguageContext'
@@ -40,16 +41,22 @@ export default function CreateTicket() {
     }
   }
 
-  function onInvalid() {
+  function onInvalid(errors) {
     toast.error(t('createTicket.invalid'))
+    // Move keyboard focus to the first field with an error (custom selects ignore this safely).
+    const first = Object.keys(errors)[0]
+    if (first) {
+      try {
+        form.setFocus(first)
+      } catch {
+        // not a focusable input
+      }
+    }
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">{t('createTicket.title')}</h1>
-        <p className="text-sm text-muted-foreground">{t('createTicket.subtitle')}</p>
-      </div>
+    <div className="mx-auto max-w-3xl space-y-6">
+      <PageHeader title={t('createTicket.title')} description={t('createTicket.subtitle')} />
 
       <Card>
         <CardHeader>

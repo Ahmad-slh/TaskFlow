@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { PlusCircle, Inbox, Download } from 'lucide-react'
+import { PlusCircle, Inbox, Download, Table2, Kanban, SearchX } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { EmptyState } from '@/components/ui/empty-state'
+import { PageHeader } from '@/components/ui/page-header'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,28 +16,26 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { TicketTable } from '@/components/tickets/TicketTable'
-import {
-  TicketFilters,
-  DEFAULT_FILTERS,
-  applyTicketFilters,
-} from '@/components/tickets/TicketFilters'
+import { TicketKanban } from '@/components/tickets/TicketKanban'
+import { TicketFilters, applyTicketFilters } from '@/components/tickets/TicketFilters'
 import { useMyTickets, useUpdateTicketStatus } from '@/hooks/useTickets'
+import { useTicketFilters } from '@/hooks/useTicketFilters'
 import { useTranslation } from '@/context/LanguageContext'
 import { toast } from '@/components/ui/sonner'
 import { friendlyError } from '@/lib/utils'
 import { exportTicketsCsv } from '@/lib/ticketCsv'
 
 const getAssignee = (ticket) => ticket.assigned_profile
+const getAssigneeName = (ticket) => ticket.assigned_profile?.name
 
 export default function MyTickets() {
   const { data: tickets = [], isLoading } = useMyTickets()
   const updateStatus = useUpdateTicketStatus()
   const { t } = useTranslation()
-  const [filters, setFilters] = useState(DEFAULT_FILTERS)
+  const { filters, setFilters, view, setView } = useTicketFilters()
   const [ticketToCancel, setTicketToCancel] = useState(null)
 
   const filtered = useMemo(() => applyTicketFilters(tickets, filters), [tickets, filters])
-
   const hasNoTickets = !isLoading && tickets.length === 0
 
   async function confirmCancel() {
@@ -49,51 +49,56 @@ export default function MyTickets() {
     }
   }
 
+  const noMatches = (
+    <EmptyState
+      icon={SearchX}
+      title={t('myTickets.noMatches')}
+      className="bg-card"
+    />
+  )
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">{t('myTickets.title')}</h1>
-          <p className="text-sm text-muted-foreground">{t('myTickets.subtitle')}</p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            disabled={!filtered.length}
-            onClick={() =>
-              exportTicketsCsv(t, filtered, t('myTickets.assignedTo'), (r) => r.assigned_profile?.name)
-            }
-          >
-            <Download className="h-4 w-4" />
-            {t('table.exportCsv')}
-          </Button>
-          <Button asChild>
-            <Link to="/create-ticket">
-              <PlusCircle className="h-4 w-4" />
-              {t('myTickets.createTicket')}
-            </Link>
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        title={t('myTickets.title')}
+        description={t('myTickets.subtitle')}
+        actions={
+          <>
+            <Button
+              variant="outline"
+              disabled={!filtered.length}
+              onClick={() =>
+                exportTicketsCsv(t, filtered, t('myTickets.assignedTo'), getAssigneeName)
+              }
+            >
+              <Download className="h-4 w-4" />
+              <span className="hidden sm:inline">{t('table.exportCsv')}</span>
+            </Button>
+            <Button asChild>
+              <Link to="/create-ticket">
+                <PlusCircle className="h-4 w-4" />
+                {t('myTickets.createTicket')}
+              </Link>
+            </Button>
+          </>
+        }
+      />
 
       {hasNoTickets ? (
-        <Card>
-          <CardContent className="flex flex-col items-center gap-4 p-12 text-center">
-            <Inbox className="h-10 w-10 text-muted-foreground" />
-            <div>
-              <p className="font-medium">{t('myTickets.emptyTitle')}</p>
-              <p className="text-sm text-muted-foreground">
-                {t('myTickets.emptySubtitle')}
-              </p>
-            </div>
+        <EmptyState
+          icon={Inbox}
+          title={t('myTickets.emptyTitle')}
+          description={t('myTickets.emptySubtitle')}
+          className="bg-card"
+          action={
             <Button asChild>
               <Link to="/create-ticket">
                 <PlusCircle className="h-4 w-4" />
                 {t('myTickets.createFirst')}
               </Link>
             </Button>
-          </CardContent>
-        </Card>
+          }
+        />
       ) : (
         <>
           <TicketFilters
@@ -103,23 +108,44 @@ export default function MyTickets() {
             personLabel={t('myTickets.assignedTo')}
             getPerson={getAssignee}
           />
-          <TicketTable
-            tickets={filtered}
-            loading={isLoading}
-            personColumn={{
-              header: t('myTickets.assignedTo'),
-              getName: (row) => row.assigned_profile?.name,
-            }}
-            onCancel={(row) => setTicketToCancel(row)}
-            cancellingId={updateStatus.isPending ? ticketToCancel?.id : null}
-            emptyState={
-              <Card>
-                <CardContent className="p-10 text-center text-sm text-muted-foreground">
-                  {t('myTickets.noMatches')}
-                </CardContent>
-              </Card>
-            }
-          />
+
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-sm text-muted-foreground" aria-live="polite">
+              {t('dashboard.ticketsCount', { count: filtered.length })}
+            </p>
+            <Tabs value={view} onValueChange={setView}>
+              <TabsList>
+                <TabsTrigger value="table">
+                  <Table2 />
+                  {t('view.table')}
+                </TabsTrigger>
+                <TabsTrigger value="board">
+                  <Kanban />
+                  {t('view.board')}
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+
+          {view === 'board' ? (
+            filtered.length || isLoading ? (
+              <TicketKanban tickets={filtered} getPersonName={getAssigneeName} />
+            ) : (
+              noMatches
+            )
+          ) : (
+            <TicketTable
+              tickets={filtered}
+              loading={isLoading}
+              personColumn={{
+                header: t('myTickets.assignedTo'),
+                getName: getAssigneeName,
+              }}
+              onCancel={(row) => setTicketToCancel(row)}
+              cancellingId={updateStatus.isPending ? ticketToCancel?.id : null}
+              emptyState={noMatches}
+            />
+          )}
         </>
       )}
 

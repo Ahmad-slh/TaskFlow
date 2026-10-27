@@ -51,6 +51,12 @@ export default {
   },
 
   login: {
+    heroTitle: 'Every request, tracked from start to done.',
+    feature1: 'Create and assign tickets in seconds',
+    feature2: 'Keep customers, developers and tickets in one place',
+    feature3: 'See what is overdue and what is moving',
+    showPassword: 'Show password',
+    hidePassword: 'Hide password',
     appName: 'TaskFlow',
     tagline: 'Internal ticket management for teams',
     title: 'Sign in',
@@ -66,6 +72,7 @@ export default {
   },
 
   dashboard: {
+    statusBreakdown: 'Status breakdown',
     overdue: 'Overdue',
     criticalOpen: 'Critical Open',
     avgResolution: 'Avg. Resolution Time',
@@ -90,6 +97,11 @@ export default {
   },
 
   createTicket: {
+    sectionDetails: 'Details',
+    sectionClassification: 'Classification',
+    sectionAssignment: 'Assignment & timing',
+    dueDateHelp: 'Optional. Overdue tickets are highlighted in red.',
+    estimatedHoursHelp: 'Optional. How many hours the work should take.',
     customer: 'Customer',
     selectCustomer: 'Select a customer',
     loadingCustomers: 'Loading customers…',
@@ -154,6 +166,14 @@ export default {
   },
 
   ticketDetail: {
+    detailsTitle: 'Details',
+    actionsTitle: 'Actions',
+    timeProgress: 'Time vs. estimate',
+    elapsed: 'Elapsed',
+    overEstimate: 'Over estimate',
+    notStarted: 'Work has not started yet.',
+    dropFiles: 'Drop a file here or click to upload',
+    dropFilesHint: 'Any file type. It is shared with the creator and the assignee.',
     customer: 'Customer',
     dueDate: 'Due date',
     estimatedHours: 'Estimated',
@@ -230,6 +250,8 @@ export default {
   },
 
   filters: {
+    more: 'Filters',
+    clear: 'Clear',
     customer: 'Customer',
     allCustomers: 'All Customers',
     person: 'Person',
@@ -342,6 +364,20 @@ export default {
     customers: 'Customers',
     pages: 'Pages',
     actions: 'Actions',
+  },
+
+  kanban: {
+    hintMove: 'Drag a card to the next column, or use the card menu, to move it forward.',
+    hintReadOnly: 'Board view of your tickets by status.',
+    dropHere: 'Drop here',
+    empty: 'No tickets',
+    actions: 'Ticket actions',
+    moved: 'Moved to {status}',
+  },
+
+  view: {
+    table: 'Table',
+    board: 'Board',
   },
 
   errors: {

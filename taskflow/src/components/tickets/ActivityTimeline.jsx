@@ -17,10 +17,38 @@ function useDisplayValue() {
   }
 }
 
-export function ActivityTimeline({ ticketId }) {
+/**
+ * Ticket activity timeline.
+ * @param bare  render only the list (no Card), for use inside a tab panel
+ */
+export function ActivityTimeline({ ticketId, bare = false }) {
   const { t } = useTranslation()
   const { data: events = [], isLoading } = useTicketActivity(ticketId)
   const display = useDisplayValue()
+
+  const body = isLoading ? (
+    <Skeleton className="h-16 w-full" />
+  ) : events.length === 0 ? (
+    <p className="text-sm text-muted-foreground">{t('ticketDetail.noActivity')}</p>
+  ) : (
+    <ol className="relative space-y-5 border-s ps-5">
+      {events.map((event) => (
+        <li key={event.id} className="relative">
+          <span className="absolute -start-[25px] top-1.5 h-2.5 w-2.5 rounded-full bg-primary ring-4 ring-card" />
+          <p className="text-sm">
+            <span className="font-semibold">{event.actor?.name || t('activity.someone')}</span>{' '}
+            {t(`activity.${event.action}`, {
+              old: display(event.action, event.old_value),
+              new: display(event.action, event.new_value),
+            })}
+          </p>
+          <p className="text-xs text-muted-foreground">{timeAgo(event.created_at)}</p>
+        </li>
+      ))}
+    </ol>
+  )
+
+  if (bare) return body
 
   return (
     <Card>
@@ -32,31 +60,7 @@ export function ActivityTimeline({ ticketId }) {
           </span>
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        {isLoading ? (
-          <Skeleton className="h-16 w-full" />
-        ) : events.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t('ticketDetail.noActivity')}</p>
-        ) : (
-          <ol className="relative space-y-4 border-s ps-5">
-            {events.map((event) => (
-              <li key={event.id} className="relative">
-                <span className="absolute -start-[25px] top-1.5 h-2 w-2 rounded-full bg-primary" />
-                <p className="text-sm">
-                  <span className="font-medium">
-                    {event.actor?.name || t('activity.someone')}
-                  </span>{' '}
-                  {t(`activity.${event.action}`, {
-                    old: display(event.action, event.old_value),
-                    new: display(event.action, event.new_value),
-                  })}
-                </p>
-                <p className="text-xs text-muted-foreground">{timeAgo(event.created_at)}</p>
-              </li>
-            ))}
-          </ol>
-        )}
-      </CardContent>
+      <CardContent>{body}</CardContent>
     </Card>
   )
 }

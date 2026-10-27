@@ -51,6 +51,12 @@ export default {
   },
 
   login: {
+    heroTitle: 'كل طلب متابَع من البداية حتى الإنجاز.',
+    feature1: 'أنشئ التذاكر وأسندها خلال ثوانٍ',
+    feature2: 'العملاء والمطوّرون والتذاكر في مكان واحد',
+    feature3: 'اعرف ما تأخّر وما يسير بشكل جيد',
+    showPassword: 'إظهار كلمة السر',
+    hidePassword: 'إخفاء كلمة السر',
     appName: 'TaskFlow',
     tagline: 'إدارة التذاكر الداخلية للفرق',
     title: 'تسجيل الدخول',
@@ -66,6 +72,7 @@ export default {
   },
 
   dashboard: {
+    statusBreakdown: 'توزيع الحالات',
     overdue: 'متأخرة',
     criticalOpen: 'حرجة مفتوحة',
     avgResolution: 'متوسط وقت الحل',
@@ -90,6 +97,11 @@ export default {
   },
 
   createTicket: {
+    sectionDetails: 'التفاصيل',
+    sectionClassification: 'التصنيف',
+    sectionAssignment: 'الإسناد والتوقيت',
+    dueDateHelp: 'اختياري. التذاكر المتأخرة تظهر باللون الأحمر.',
+    estimatedHoursHelp: 'اختياري. عدد الساعات المتوقعة للعمل.',
     customer: 'العميل',
     selectCustomer: 'اختر عميلاً',
     loadingCustomers: 'جارٍ تحميل العملاء…',
@@ -153,6 +165,14 @@ export default {
   },
 
   ticketDetail: {
+    detailsTitle: 'التفاصيل',
+    actionsTitle: 'الإجراءات',
+    timeProgress: 'الوقت مقابل التقدير',
+    elapsed: 'المنقضي',
+    overEstimate: 'تجاوز التقدير',
+    notStarted: 'لم يبدأ العمل بعد.',
+    dropFiles: 'أفلت ملفاً هنا أو اضغط للرفع',
+    dropFilesHint: 'أي نوع ملف. يظهر لمنشئ التذكرة والمطوّر المسند.',
     customer: 'العميل',
     dueDate: 'تاريخ الاستحقاق',
     estimatedHours: 'المقدّر',
@@ -229,6 +249,8 @@ export default {
   },
 
   filters: {
+    more: 'الفلاتر',
+    clear: 'مسح',
     customer: 'العميل',
     allCustomers: 'كل العملاء',
     person: 'الشخص',
@@ -341,6 +363,20 @@ export default {
     customers: 'العملاء',
     pages: 'الصفحات',
     actions: 'إجراءات',
+  },
+
+  kanban: {
+    hintMove: 'اسحب البطاقة إلى العمود التالي، أو استخدم قائمة البطاقة، لتحريكها للأمام.',
+    hintReadOnly: 'عرض تذاكرك على لوحة حسب الحالة.',
+    dropHere: 'أفلت هنا',
+    empty: 'لا توجد تذاكر',
+    actions: 'إجراءات التذكرة',
+    moved: 'تم النقل إلى {status}',
+  },
+
+  view: {
+    table: 'جدول',
+    board: 'لوحة',
   },
 
   errors: {

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { ArrowDown, ArrowUp, ArrowUpDown, Eye, XCircle } from 'lucide-react'
 import {
   Table,
@@ -14,6 +14,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { StatusBadge } from '@/components/tickets/StatusBadge'
 import { PriorityBadge } from '@/components/tickets/PriorityBadge'
 import { TypeBadge } from '@/components/tickets/TypeBadge'
+import { TicketCard } from '@/components/tickets/TicketCard'
 import {
   PRIORITY_RANK,
   cn,
@@ -76,6 +77,7 @@ export function TicketTable({
 }) {
   const { t } = useTranslation()
   const now = useNow()
+  const navigate = useNavigate()
   const [sort, setSort] = useState({ key: null, dir: 'asc' })
 
   function toggleSort(key) {
@@ -102,7 +104,7 @@ export function TicketTable({
 
   if (loading) {
     return (
-      <div className="rounded-lg border bg-card">
+      <div className="overflow-hidden rounded-xl border bg-card shadow-soft">
         <Table>
           <TableBody>
             {Array.from({ length: 5 }).map((_, i) => (
@@ -125,7 +127,14 @@ export function TicketTable({
   }
 
   return (
-    <div className="rounded-lg border bg-card">
+    <>
+      <div className="space-y-3 md:hidden">
+        {rows.map((ticket) => (
+          <TicketCard key={ticket.id} ticket={ticket} personName={personColumn?.getName(ticket)} />
+        ))}
+      </div>
+
+      <div className="hidden overflow-hidden rounded-xl border bg-card shadow-soft md:block">
       <Table>
         <TableHeader>
           <TableRow>
@@ -156,7 +165,11 @@ export function TicketTable({
           {rows.map((ticket) => {
             const overdue = isOverdue(ticket)
             return (
-              <TableRow key={ticket.id}>
+              <TableRow
+                key={ticket.id}
+                className={cn('cursor-pointer', overdue && 'bg-destructive/5')}
+                onClick={() => navigate(`/tickets/${ticket.id}`)}
+              >
                 <TableCell className="font-mono text-xs text-muted-foreground">
                   {ticket.ticket_number}
                 </TableCell>
@@ -203,7 +216,7 @@ export function TicketTable({
                       ? formatDurationShort(ticket.started_at, now)
                       : '—'}
                 </TableCell>
-                <TableCell className="text-end">
+                <TableCell className="text-end" onClick={(e) => e.stopPropagation()}>
                   <div className="flex items-center justify-end gap-2">
                     <Button asChild variant="outline" size="sm">
                       <Link to={`/tickets/${ticket.id}`}>
@@ -230,6 +243,7 @@ export function TicketTable({
           })}
         </TableBody>
       </Table>
-    </div>
+      </div>
+    </>
   )
 }

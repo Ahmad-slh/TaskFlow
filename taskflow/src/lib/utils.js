@@ -121,3 +121,8 @@ export function formatDay(value) {
 
 /** Priority sort rank — higher is more urgent. */
 export const PRIORITY_RANK = { Critical: 4, High: 3, Medium: 2, Low: 1 }
+
+/** Today's date in a long, localized form, e.g. "Tuesday, Oct 27, 2026". */
+export function formatToday() {
+  return format(new Date(), 'EEEE, MMM d, yyyy', dateLocale())
+}
